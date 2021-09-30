@@ -9,12 +9,14 @@ on:
 jobs:
   fork-news:
     runs-on: ubuntu-latest
-    name: Sync with parent repository
+    name: Sync Fork
     steps:
-      - id: fork-news-sync
-        uses: vitornovictor/fork-news@v1.0.0
+      - id: Update fork from upstream
+        uses: lelia/forker@v0.0.1
         with:
-          from-branch: main
-          from-repository: javiyt/tweetgram
-          to-branch: main
-          access-token: ${{ secrets.FORK_NEWS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: javiyt
+          owner: tweetgram
+          org: quintodown
+          user: javiyt
+          addUser: true
