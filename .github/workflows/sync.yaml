@@ -16,6 +16,6 @@ jobs:
           upstream_repository: javiyt/tweetgram
           target_repository: quintodown/quintodownbot
           upstream_branch: main
-          target_branch: main
+          target_branch: upstream_update
           force: true
           tags: true
