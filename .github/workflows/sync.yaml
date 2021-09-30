@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Sync Fork
     steps:
-      - id: Update fork from upstream
+      - id: update-fork
         uses: lelia/forker@v0.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
