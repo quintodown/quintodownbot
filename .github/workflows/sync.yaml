@@ -15,8 +15,8 @@ jobs:
         uses: lelia/forker@v0.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repo: javiyt
-          owner: tweetgram
+          repo: tweetgram
+          owner: javiyt
           org: quintodown
           user: javiyt
           addUser: true
