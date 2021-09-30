@@ -1,15 +1,25 @@
-name: Sync Fork
-
 on:
-  workflow_dispatch: # on button click
+  # schedule:
+    # - cron:  '0 7 * * 1,4'
+    # scheduled at 07:00 every Monday and Thursday
+
+  workflow_dispatch:  # click the button on Github repo!
 
 jobs:
-  sync:
+  sync_latest_from_upstream:
     runs-on: ubuntu-latest
+    name: Sync latest commits from upstream repo
+
     steps:
-      - uses: tgymnich/fork-sync@v1.5
-        with:
-          owner: javiyt
-          base: main
-          head: main
-          merge_method: squash
+    - name: Checkout target repo
+      uses: actions/checkout@v2
+
+    - name: Sync upstream changes
+      id: sync
+      uses: aormsby/Fork-Sync-With-Upstream-action@v3.0
+      with:
+        target_sync_branch: main
+        target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+        upstream_sync_branch: main
+        upstream_sync_repo: javiyt/tweetgram
+        test_mode: false
