@@ -1,4 +1,7 @@
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch: # on button click
 name: Build and Deploy
 jobs:
@@ -28,12 +31,18 @@ jobs:
     - name: Run code generation
       run: task generate
     - name: Build Binary
-      run: go build -o tweetgram cmd/main.go
-    - name: Find and Replace
+      run: go build -o ${{secrets.BINARY_NAME}} cmd/main.go
+    - name: Find and Replace binary folder
       uses: jacobtomlinson/gha-find-replace@master
       with:
         find: "/home/tweetgram/bin"
         replace: ${{secrets.FOLDER}}
+        include: "system/"
+    - name: Find and Replace binary name
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "tweetgram_bin"
+        replace: ${{secrets.BINARY_NAME}}
         include: "systemd/"
     - name: Copy binary
       uses: appleboy/scp-action@master
@@ -54,7 +63,7 @@ jobs:
         port: ${{secrets.PORT}}
         passphrase: ${{secrets.PASSPHRASE}}
         source: systemd/user/bot.service
-        target: /home/${{secrets.USERNAME}}/.config/
+        target: /home/${{secrets.USERNAME}}/.config/systemd/user/${{secrets.BINARY_NAME}}.service
         strip_components: 1
     - name: Run new bot version
       uses: appleboy/ssh-action@master
@@ -65,7 +74,7 @@ jobs:
         port: ${{secrets.PORT}}
         passphrase: ${{secrets.PASSPHRASE}}
         script: |
-          systemctl --user stop bot.service   
+          systemctl --user stop ${{secrets.BINARY_NAME}}.service   
           systemctl --user daemon-reload
-          systemctl --user start bot.service   
-          systemctl --user status bot.service
+          systemctl --user start ${{secrets.BINARY_NAME}}.service   
+          systemctl --user status ${{secrets.BINARY_NAME}}.service
