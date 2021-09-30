@@ -54,6 +54,8 @@ jobs:
         passphrase: ${{secrets.PASSPHRASE}}
         source: ${{secrets.BINARY_NAME}}
         target: ${{secrets.FOLDER}}
+    - name: Generate service file
+      run: mv  systemd/user/bot.service ${{secrets.BINARY_NAME}}.service
     - name: Copy systemd file
       uses: appleboy/scp-action@master
       with:
@@ -62,8 +64,8 @@ jobs:
         key: ${{secrets.SSHKEY}}
         port: ${{secrets.PORT}}
         passphrase: ${{secrets.PASSPHRASE}}
-        source: systemd/user/bot.service
-        target: /home/${{secrets.USERNAME}}/.config/systemd/user/${{secrets.BINARY_NAME}}.service
+        source: ${{secrets.BINARY_NAME}}.service
+        target: /home/${{secrets.USERNAME}}/.config/systemd/user/
         strip_components: 1
     - name: Run new bot version
       uses: appleboy/ssh-action@master
