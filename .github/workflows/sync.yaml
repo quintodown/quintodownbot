@@ -7,16 +7,15 @@ on:
   workflow_dispatch:  # click the button on Github repo!
 
 jobs:
-  fork-news:
+  update_external_airflow_fork:
     runs-on: ubuntu-latest
-    name: Sync Fork
     steps:
-      - id: update-fork
-        uses: lelia/forker@v0.0.1
+      - uses: TobKed/github-forks-sync-action@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repo: tweetgram
-          owner: javiyt
-          org: quintodown
-          user: javiyt
-          addUser: true
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          upstream_repository: javiyt/tweetgram
+          target_repository: quintodown/quintodownbot
+          upstream_branch: main
+          target_branch: main
+          force: true
+          tags: true
