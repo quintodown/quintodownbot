@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: TobKed/github-forks-sync-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
           upstream_repository: javiyt/tweetgram
           target_repository: quintodown/quintodownbot
           upstream_branch: main
