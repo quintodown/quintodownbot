@@ -7,20 +7,14 @@ on:
   workflow_dispatch:  # click the button on Github repo!
 
 jobs:
-  sync_latest_from_upstream:
+  fork-news:
     runs-on: ubuntu-latest
-    name: Sync latest commits from upstream repo
-
+    name: Sync with parent repository
     steps:
-    - name: Checkout target repo
-      uses: actions/checkout@v2
-
-    - name: Sync upstream changes
-      id: sync
-      uses: aormsby/Fork-Sync-With-Upstream-action@v3.0
-      with:
-        target_sync_branch: main
-        target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-        upstream_sync_branch: main
-        upstream_sync_repo: javiyt/tweetgram
-        test_mode: false
+      - id: fork-news-sync
+        uses: vitornovictor/fork-news@v1.0.0
+        with:
+          from-branch: main
+          from-repository: javiyt/tweetgram
+          to-branch: main
+          access-token: ${{ secrets.FORK_NEWS_TOKEN }}
