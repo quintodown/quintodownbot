@@ -20,6 +20,11 @@ jobs:
           target_branch: upstream_update
           force: true
           tags: true
+      - name: Checkout repoistory
+        uses: actions/checkout@v2
+        with:
+          ref: upstream_update
+          fetch-depth: 0          
       - name: Create pull request
         uses: devops-infra/action-pull-request@v0.4.2
         with:
