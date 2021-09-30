@@ -52,7 +52,7 @@ jobs:
         key: ${{secrets.SSHKEY}}
         port: ${{secrets.PORT}}
         passphrase: ${{secrets.PASSPHRASE}}
-        source: tweetgram
+        source: ${{secrets.BINARY_NAME}}
         target: ${{secrets.FOLDER}}
     - name: Copy systemd file
       uses: appleboy/scp-action@master
