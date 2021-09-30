@@ -7,10 +7,11 @@ on:
   workflow_dispatch:  # click the button on Github repo!
 
 jobs:
-  update_external_airflow_fork:
+  update_forked:
     runs-on: ubuntu-latest
     steps:
-      - uses: TobKed/github-forks-sync-action@master
+      - name: Update forked repository from upstream
+        uses: TobKed/github-forks-sync-action@master
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           upstream_repository: javiyt/tweetgram
@@ -19,3 +20,12 @@ jobs:
           target_branch: upstream_update
           force: true
           tags: true
+      - name: Create pull request
+        uses: devops-infra/action-pull-request@v0.4.2
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          title: Updating forked repository from upstream
+          assignee: javiyt
+          reviewer: javiyt
+          source_branch: upstream_update
+          target_branch: main
