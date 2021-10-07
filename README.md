@@ -17,7 +17,7 @@ task setup
 And you are done, it will generate the env files needed to run the bot and will download all dependencies, also run all
 code generation tools.
 
-###  Configuring the bot
+### Configuring the bot
 
 You can find a file inside cmd folder called env where you can adjust the variables, take into account the generated one
 are random values. The content of the env file will look like following:
