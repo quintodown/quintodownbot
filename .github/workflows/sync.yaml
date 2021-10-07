@@ -3,7 +3,6 @@ on:
   # schedule:
     # - cron:  '0 7 * * 1,4'
     # scheduled at 07:00 every Monday and Thursday
-
   workflow_dispatch:  # click the button on Github repo!
 
 jobs:
@@ -20,15 +19,16 @@ jobs:
           target_branch: upstream_update
           force: true
           tags: true
-      - name: Checkout repoistory
+      - name: Checkout repository
         uses: actions/checkout@v2
         with:
           ref: upstream_update
-          fetch-depth: 0          
+          fetch-depth: 0
       - name: Create pull request
         uses: devops-infra/action-pull-request@v0.4.2
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          title: Updating forked repository from upstream
           source_branch: upstream_update
           target_branch: main
+          assignee: javiyt
+          body: Update from fork
