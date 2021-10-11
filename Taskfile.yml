@@ -84,6 +84,7 @@ tasks:
       - install
     cmds:
       - go run golang.org/x/tools/cmd/stringer -type=TopicName internal/pubsub/broadcast.go
+      - go run golang.org/x/tools/cmd/stringer -type=GameChange,Competition,GameState internal/games/model.go
   json:
     desc: Generate json Marshal/Unmarshal functions
     run: once
@@ -108,7 +109,7 @@ tasks:
       - install
       - generate
     cmds:
-      - go test -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic ./...
+      - go test -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic -shuffle on ./...
   run-test:
     desc: Execute test mode for the bot
     deps:
