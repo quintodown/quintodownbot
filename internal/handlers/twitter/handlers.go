@@ -3,9 +3,9 @@ package handlers_twitter
 import (
 	"context"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/handlers"
-	"github.com/javiyt/tweetgram/internal/pubsub"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/handlers"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/mailru/easyjson"
 )
 
