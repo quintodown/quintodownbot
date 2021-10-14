@@ -74,20 +74,21 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 	mclk := new(mapp.Clock)
 
 	initialised := make(chan interface{})
+	now := time.Now().UTC()
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 		defer close(initialised)
 		return []games.Game{
 			{
 				Id:    "asdfg",
-				Start: time.Now().UTC().Add(5 * time.Hour),
+				Start: now.Add(5 * time.Hour),
 			},
 			{
 				Id:    "gfdsa",
-				Start: time.Now().UTC().Add(time.Hour),
+				Start: now.Add(time.Hour),
 			},
 		}
 	}, nil)
-	mclk.On("Now").Once().Return(time.Now())
+	mclk.On("Now").Once().Return(now)
 
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
