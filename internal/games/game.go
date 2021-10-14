@@ -28,9 +28,7 @@ type GameHandler struct {
 func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) *GameHandler {
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
 	if getGames {
-		go func() {
-			gh.initGames()
-		}()
+		go func() { gh.initGames() }()
 	}
 
 	return gh
@@ -75,7 +73,7 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 	for _, competition := range GetCompetitions() {
 		gameList := gh.loadGames(competition)
 		for i, v := range gameList {
-			if onlyPlaying && !v.isGameInProgress() {
+			if onlyPlaying && !v.isGameInProgress(gh.clk) {
 				continue
 			}
 

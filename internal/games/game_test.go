@@ -15,34 +15,46 @@ import (
 )
 
 func TestGameHandler_GetGames(t *testing.T) {
-	gic := new(mgms.GameInfoClient)
-	q := new(mps.Queue)
-	mclk := new(mapp.Clock)
-
 	t.Run("it should return an empty list when games shouldn't be initialised", func(t *testing.T) {
+		gic := new(mgms.GameInfoClient)
+		q := new(mps.Queue)
+		mclk := new(mapp.Clock)
+
 		gh := games.NewGameHandler(gic, false, q, mclk)
 
 		require.Empty(t, gh.GetGames(games.NFL))
 	})
 
 	t.Run("it should return an empty list when failed initialising games", func(t *testing.T) {
+		gic := new(mgms.GameInfoClient)
+		q := new(mps.Queue)
+		mclk := new(mapp.Clock)
+
 		initialised := make(chan interface{})
 		gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 			defer close(initialised)
+
 			return nil
 		}, errors.New("failing"))
 
 		gh := games.NewGameHandler(gic, true, q, mclk)
 
 		<-initialised
+
 		require.Empty(t, gh.GetGames(games.NFL))
 		gic.AssertExpectations(t)
 	})
 
 	t.Run("it should return a list of games sorted by start date after they have been initialised", func(t *testing.T) {
+		gic := new(mgms.GameInfoClient)
+		q := new(mps.Queue)
+		mclk := new(mapp.Clock)
+
 		initialised := make(chan interface{})
+
 		gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 			defer close(initialised)
+
 			return []games.Game{
 				{
 					Id:    "asdfg",
@@ -60,6 +72,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 		<-initialised
 
 		getGames := gh.GetGames(games.NFL)
+
 		require.Len(t, getGames, 2)
 		require.Condition(t, func() bool {
 			return getGames[0].Start.Before(getGames[1].Start)
@@ -148,7 +161,7 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 	startPlaying := time.Now().UTC().Add(-1 * time.Hour)
 
 	t.Run("it should not send any update when fails getting game update", func(t *testing.T) {
-		gic, _, gh := initialiseGameHandler(startPlaying)
+		gic, _, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -157,10 +170,12 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		gh.UpdateGamesInformation(true)
 
 		gic.AssertExpectations(t)
+		gic = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when game has been rescheduled", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		newTime := time.Now().UTC().Add(4 * time.Hour)
 
@@ -192,10 +207,13 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when home team scores", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -228,10 +246,13 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when away team scores", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -264,10 +285,13 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when game has started", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -303,10 +327,13 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when period has finished", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -342,10 +369,13 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 	t.Run("it should send game information when game has finished", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -378,11 +408,14 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 
 		gic.AssertExpectations(t)
 		q.AssertExpectations(t)
+		gic = nil
+		q = nil
+		gh = nil
 	})
 
 }
 
-func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Queue, *games.GameHandler) {
+func initialiseGameHandler(t *testing.T, startPlaying time.Time) (*mgms.GameInfoClient, *mps.Queue, *games.GameHandler) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
 	mclk := new(mapp.Clock)
@@ -390,6 +423,7 @@ func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Q
 	initialised := make(chan interface{})
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 		defer close(initialised)
+
 		return []games.Game{
 			{
 				Id:          "asdfg",
@@ -404,11 +438,13 @@ func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Q
 			},
 		}
 	}, nil)
-	mclk.On("Now").Once().Return(time.Now().UTC())
+	mclk.On("Now").Return(time.Now().UTC())
 
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
+
+	require.Eventually(t, func() bool { return len(gh.GetGames(games.NFL)) == 2 }, time.Second, time.Millisecond)
 
 	return gic, q, gh
 }

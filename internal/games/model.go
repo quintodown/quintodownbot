@@ -1,6 +1,7 @@
 package games
 
 import (
+	"github.com/quintodown/quintodownbot/internal/app"
 	"time"
 )
 
@@ -90,8 +91,8 @@ type GameWeather struct {
 	Temperature  int
 }
 
-func (g *Game) isGameInProgress() bool {
-	return time.Now().UTC().After(g.Start.UTC()) && !g.hasFinishedGame()
+func (g *Game) isGameInProgress(clk app.Clock) bool {
+	return clk.Now().After(g.Start.UTC()) && !g.hasFinishedGame()
 }
 
 func (g *Game) hasFinishedGame() bool {
