@@ -106,6 +106,7 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
+	require.Eventually(t, func() bool { return len(gh.GetGames(games.NFL)) == 2 }, time.Second, time.Millisecond)
 
 	getGames := gh.GetGamesStartingIn(games.NFL, time.Hour)
 	require.Len(t, getGames, 1)
