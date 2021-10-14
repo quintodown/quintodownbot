@@ -1,0 +1,642 @@
+[
+  {
+    "Id": "401326613",
+    "Start": "2021-08-19T23:30:00Z",
+    "Name": "New England Patriots at Philadelphia Eagles",
+    "Venue": {
+      "FullName": "Lincoln Financial Field",
+      "Address": {
+        "City": "Philadelphia",
+        "State": "PA"
+      },
+      "Capacity": 69879,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly cloudy",
+      "Temperature": 77
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Philadelphia Eagles",
+      "ShortDisplayName": "Eagles",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/phi.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "New England Patriots",
+      "ShortDisplayName": "Patriots",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/ne.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326624",
+    "Start": "2021-08-21T00:00:00Z",
+    "Name": "Kansas City Chiefs at Arizona Cardinals",
+    "Venue": {
+      "FullName": "State Farm Stadium",
+      "Address": {
+        "City": "Glendale",
+        "State": "AZ"
+      },
+      "Capacity": 65000,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Arizona Cardinals",
+      "ShortDisplayName": "Cardinals",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/ari.png",
+      "Record": "1-0"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Kansas City Chiefs",
+      "ShortDisplayName": "Chiefs",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/kc.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326954",
+    "Start": "2021-08-21T00:00:00Z",
+    "Name": "Cincinnati Bengals at Washington ",
+    "Venue": {
+      "FullName": "FedExField",
+      "Address": {
+        "City": "Landover",
+        "State": "MD"
+      },
+      "Capacity": 82000,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly cloudy w/ t-storms",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Washington",
+      "ShortDisplayName": "Washington",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/wsh.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Cincinnati Bengals",
+      "ShortDisplayName": "Bengals",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/cin.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326622",
+    "Start": "2021-08-21T17:00:00Z",
+    "Name": "Buffalo Bills at Chicago Bears",
+    "Venue": {
+      "FullName": "Soldier Field",
+      "Address": {
+        "City": "Chicago",
+        "State": "IL"
+      },
+      "Capacity": 61500,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Intermittent clouds",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Chicago Bears",
+      "ShortDisplayName": "Bears",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/chi.png",
+      "Record": "1-0"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Buffalo Bills",
+      "ShortDisplayName": "Bills",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/buf.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326609",
+    "Start": "2021-08-21T20:25:00Z",
+    "Name": "New York Jets at Green Bay Packers",
+    "Venue": {
+      "FullName": "Lambeau Field",
+      "Address": {
+        "City": "Green Bay",
+        "State": "WI"
+      },
+      "Capacity": 81441,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly cloudy",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Green Bay Packers",
+      "ShortDisplayName": "Packers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/gb.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "New York Jets",
+      "ShortDisplayName": "Jets",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/nyj.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326618",
+    "Start": "2021-08-21T23:00:00Z",
+    "Name": "Atlanta Falcons at Miami Dolphins",
+    "Venue": {
+      "FullName": "Hard Rock Stadium",
+      "Address": {
+        "City": "Miami Gardens",
+        "State": "FL"
+      },
+      "Capacity": 64767,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Partly sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Miami Dolphins",
+      "ShortDisplayName": "Dolphins",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/mia.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Atlanta Falcons",
+      "ShortDisplayName": "Falcons",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/atl.png",
+      "Record": "0-1"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326922",
+    "Start": "2021-08-21T23:00:00Z",
+    "Name": "Baltimore Ravens at Carolina Panthers",
+    "Venue": {
+      "FullName": "Bank of America Stadium",
+      "Address": {
+        "City": "Charlotte",
+        "State": "NC"
+      },
+      "Capacity": 73778,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Intermittent clouds",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Carolina Panthers",
+      "ShortDisplayName": "Panthers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/car.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Baltimore Ravens",
+      "ShortDisplayName": "Ravens",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/bal.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326607",
+    "Start": "2021-08-21T23:30:00Z",
+    "Name": "Detroit Lions at Pittsburgh Steelers",
+    "Venue": {
+      "FullName": "Heinz Field",
+      "Address": {
+        "City": "Pittsburgh",
+        "State": "PA"
+      },
+      "Capacity": 68400,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Partly sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Pittsburgh Steelers",
+      "ShortDisplayName": "Steelers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/pit.png",
+      "Record": "2-0"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Detroit Lions",
+      "ShortDisplayName": "Lions",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/det.png",
+      "Record": "0-1"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326614",
+    "Start": "2021-08-21T23:30:00Z",
+    "Name": "Tennessee Titans at Tampa Bay Buccaneers",
+    "Venue": {
+      "FullName": "Raymond James Stadium",
+      "Address": {
+        "City": "Tampa",
+        "State": "FL"
+      },
+      "Capacity": 65828,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Partly sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Tampa Bay Buccaneers",
+      "ShortDisplayName": "Buccaneers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/tb.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Tennessee Titans",
+      "ShortDisplayName": "Titans",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/ten.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401333536",
+    "Start": "2021-08-22T00:00:00Z",
+    "Name": "Houston Texans at Dallas Cowboys",
+    "Venue": {
+      "FullName": "AT\u0026T Stadium",
+      "Address": {
+        "City": "Arlington",
+        "State": "TX"
+      },
+      "Capacity": 100000,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Dallas Cowboys",
+      "ShortDisplayName": "Cowboys",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/dal.png",
+      "Record": "0-2"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Houston Texans",
+      "ShortDisplayName": "Texans",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/hou.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401333582",
+    "Start": "2021-08-22T00:00:00Z",
+    "Name": "Indianapolis Colts at Minnesota Vikings",
+    "Venue": {
+      "FullName": "U.S. Bank Stadium",
+      "Address": {
+        "City": "Minneapolis",
+        "State": "MN"
+      },
+      "Capacity": 66468,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Intermittent clouds",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Minnesota Vikings",
+      "ShortDisplayName": "Vikings",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/min.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Indianapolis Colts",
+      "ShortDisplayName": "Colts",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/ind.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401329164",
+    "Start": "2021-08-22T02:00:00Z",
+    "Name": "Las Vegas Raiders at Los Angeles Rams",
+    "Venue": {
+      "FullName": "SoFi Stadium",
+      "Address": {
+        "City": "Inglewood",
+        "State": "CA"
+      },
+      "Capacity": 71500,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly cloudy",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Los Angeles Rams",
+      "ShortDisplayName": "Rams",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/lar.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Las Vegas Raiders",
+      "ShortDisplayName": "Raiders",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/lv.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401333580",
+    "Start": "2021-08-22T02:00:00Z",
+    "Name": "Denver Broncos at Seattle Seahawks",
+    "Venue": {
+      "FullName": "Lumen Field",
+      "Address": {
+        "City": "Seattle",
+        "State": "WA"
+      },
+      "Capacity": 68740,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Seattle Seahawks",
+      "ShortDisplayName": "Seahawks",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/sea.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Denver Broncos",
+      "ShortDisplayName": "Broncos",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/den.png",
+      "Record": "1-0"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401333560",
+    "Start": "2021-08-22T17:00:00Z",
+    "Name": "New York Giants at Cleveland Browns",
+    "Venue": {
+      "FullName": "FirstEnergy Stadium",
+      "Address": {
+        "City": "Cleveland",
+        "State": "OH"
+      },
+      "Capacity": 67431,
+      "Indoor": false
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Intermittent clouds",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Cleveland Browns",
+      "ShortDisplayName": "Browns",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/cle.png",
+      "Record": "1-0"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "New York Giants",
+      "ShortDisplayName": "Giants",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/nyg.png",
+      "Record": "0-1"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401329167",
+    "Start": "2021-08-22T23:30:00Z",
+    "Name": "San Francisco 49ers at Los Angeles Chargers",
+    "Venue": {
+      "FullName": "SoFi Stadium",
+      "Address": {
+        "City": "Inglewood",
+        "State": "CA"
+      },
+      "Capacity": 71500,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "Mostly sunny",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "Los Angeles Chargers",
+      "ShortDisplayName": "Chargers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/lac.png",
+      "Record": "1-0"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "San Francisco 49ers",
+      "ShortDisplayName": "49ers",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/sf.png",
+      "Record": "0-1"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  },
+  {
+    "Id": "401326620",
+    "Start": "2021-08-24T00:00:00Z",
+    "Name": "Jacksonville Jaguars at New Orleans Saints",
+    "Venue": {
+      "FullName": "Caesars Superdome",
+      "Address": {
+        "City": "New Orleans",
+        "State": "LA"
+      },
+      "Capacity": 73000,
+      "Indoor": true
+    },
+    "Status": {
+      "Clock": 0,
+      "DisplayClock": "0:00",
+      "Period": 0,
+      "State": 0
+    },
+    "Weather": {
+      "DisplayValue": "",
+      "Temperature": 0
+    },
+    "HomeTeam": {
+      "Score": 0,
+      "Name": "New Orleans Saints",
+      "ShortDisplayName": "Saints",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/no.png",
+      "Record": "0-1"
+    },
+    "AwayTeam": {
+      "Score": 0,
+      "Name": "Jacksonville Jaguars",
+      "ShortDisplayName": "Jaguars",
+      "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/jax.png",
+      "Record": "0-1"
+    },
+    "WeekName": "Preseason Week 2",
+    "Competition": 0
+  }
+]

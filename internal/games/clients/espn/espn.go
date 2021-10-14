@@ -1,27 +1,25 @@
 package espn
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/games"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
-
 )
 
 const (
 	endpointForCalendar = "https://site.api.espn.com/apis/site/v2/sports/football/%s/scoreboard"
-	endpointForWeeks    = "https://site.api.espn.com/apis/site/v2/sports/football/%s/scoreboard"
 	endpointForGames    = "https://site.api.espn.com/apis/site/v2/sports/football/%s/summary"
 	timeLayout          = "2006-01-02T15:04Z"
 	statusFinal         = "STATUS_FINAL"
-	statusScheduled     = "STATUS_SCHEDULED"
 	statusInProgress    = "STATUS_IN_PROGRESS"
 )
 
+//easyjson:json
 type gameScore struct {
 	Boxscore struct {
 		Teams []struct {
@@ -436,6 +434,7 @@ type gameScore struct {
 	} `json:"standings"`
 }
 
+//easyjson:json
 type scoreboard struct {
 	Leagues []struct {
 		ID           string `json:"id"`
@@ -635,41 +634,35 @@ type scoreboard struct {
 	} `json:"events"`
 }
 
-type week struct {
-	Name  string
-	Start time.Time
-	End   time.Time
-}
-
-func (gs gameScore) toGame(c games.Competition) (games.Game, error) {
-	t, err := time.Parse(timeLayout, gs.Header.Competitions[0].Date)
+func (v gameScore) toGame(c games.Competition) (games.Game, error) {
+	t, err := time.Parse(timeLayout, v.Header.Competitions[0].Date)
 	if err != nil {
 		return games.Game{}, err
 	}
 
 	g := games.Game{
-		Id: gs.Header.ID,
+		Id: v.Header.ID,
 		Venue: games.Venue{
-			FullName: gs.GameInfo.Venue.FullName,
+			FullName: v.GameInfo.Venue.FullName,
 			Address: games.VenueAddress{
-				City:  gs.GameInfo.Venue.Address.City,
-				State: gs.GameInfo.Venue.Address.State,
+				City:  v.GameInfo.Venue.Address.City,
+				State: v.GameInfo.Venue.Address.State,
 			},
-			Capacity: gs.GameInfo.Venue.Capacity,
+			Capacity: v.GameInfo.Venue.Capacity,
 		},
 		Start: t.UTC(),
 		Status: games.GameStatus{
-			State:        getGameStatus(gs.Header.Competitions[0].Status.Type.Name),
-			DisplayClock: gs.Header.Competitions[0].Status.DisplayClock,
-			Period:       gs.Header.Competitions[0].Status.Period,
+			State:        getGameStatus(v.Header.Competitions[0].Status.Type.Name),
+			DisplayClock: v.Header.Competitions[0].Status.DisplayClock,
+			Period:       v.Header.Competitions[0].Status.Period,
 		},
 		Weather: games.GameWeather{
-			Temperature: (gs.GameInfo.Weather.Temperature - 32) * 5 / 9,
+			Temperature: (v.GameInfo.Weather.Temperature - 32) * 5 / 9,
 		},
 		Competition: c,
 	}
 
-	for _, v := range gs.Header.Competitions[0].Competitors {
+	for _, v := range v.Header.Competitions[0].Competitors {
 		logo := ""
 		if len(v.Team.Logos) > 0 {
 			logo = v.Team.Logos[0].Href
@@ -699,9 +692,9 @@ func (gs gameScore) toGame(c games.Competition) (games.Game, error) {
 	return g, nil
 }
 
-func (sb scoreboard) toCalendar(c games.Competition) []games.Week {
+func (v scoreboard) toCalendar() []games.Week {
 	var weeks []games.Week
-	for _, c := range sb.Leagues[0].Calendar {
+	for _, c := range v.Leagues[0].Calendar {
 		for _, v := range c.Entries {
 			start, err := time.Parse(timeLayout, v.StartDate)
 			if err != nil {
@@ -723,9 +716,9 @@ func (sb scoreboard) toCalendar(c games.Competition) []games.Week {
 	return weeks
 }
 
-func (sb scoreboard) toGames(c games.Competition, calendar []games.Week) []games.Game {
+func (v scoreboard) toGames(c games.Competition, calendar []games.Week) []games.Game {
 	var found []games.Game
-	for _, v := range sb.Events {
+	for _, v := range v.Events {
 		t, err := time.Parse(timeLayout, v.Date)
 		if err != nil {
 			continue
@@ -790,84 +783,69 @@ func (sb scoreboard) toGames(c games.Competition, calendar []games.Week) []games
 	return found
 }
 
-type ESPNClient struct {
+type Client struct {
 	client *http.Client
+	clk    app.Clock
 }
 
-func NewESPNClient(c *http.Client) games.GameInfoClient {
-	return &ESPNClient{client: c}
+func NewESPNClient(c *http.Client, clk app.Clock) games.GameInfoClient {
+	return &Client{client: c, clk: clk}
 }
 
-func (ec *ESPNClient) GetGames(competition games.Competition) ([]games.Game, error) {
+func (ec *Client) GetGames(competition games.Competition) ([]games.Game, error) {
 	const datesLayout = "20060102"
-	req, err := ec.getRequest(endpointForCalendar, competition, map[string]string{})
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := ec.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
 	var scb scoreboard
-	if err := json.NewDecoder(resp.Body).Decode(&scb); err != nil {
+
+	if err := ec.executeCall(endpointForCalendar, competition, map[string]string{}, &scb); err != nil {
 		return nil, err
 	}
-	calendar := scb.toCalendar(competition)
 
+	calendar := scb.toCalendar()
 	params := map[string]string{}
+	now := ec.clk.Now()
 	for _, v := range calendar {
-		if v.Start.UTC().Before(time.Now().UTC()) && v.End.UTC().After(time.Now().UTC()) {
+		if v.Start.UTC().Before(now) && v.End.UTC().After(now) {
 			params["dates"] = fmt.Sprintf("%s-%s", v.Start.Format(datesLayout), v.End.Format(datesLayout))
+			break
 		}
 	}
-	req, err = ec.getRequest(endpointForWeeks, competition, params)
-	if err != nil {
-		return nil, err
-	}
 
-	resp, err = ec.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if err := json.NewDecoder(resp.Body).Decode(&scb); err != nil {
+	if err := ec.executeCall(endpointForCalendar, competition, params, &scb); err != nil {
 		return nil, err
 	}
 
 	return scb.toGames(competition, calendar), nil
 }
 
-func (ec *ESPNClient) GetGameInformation(competition games.Competition, id string) (games.Game, error) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("Error getting game information %s %s: %s", competition.String(), id, r)
-		}
-	}()
-
-	req, err := ec.getRequest(endpointForGames, competition, map[string]string{"event": id})
-	if err != nil {
-		return games.Game{}, err
-	}
-
-	resp, err := ec.client.Do(req)
-	if err != nil {
-		return games.Game{}, err
-	}
-	defer resp.Body.Close()
-
+func (ec *Client) GetGameInformation(competition games.Competition, id string) (games.Game, error) {
 	var gsc gameScore
-	if err := json.NewDecoder(resp.Body).Decode(&gsc); err != nil {
+	if err := ec.executeCall(endpointForGames, competition, map[string]string{"event": id}, &gsc); err != nil {
 		return games.Game{}, err
 	}
 
 	return gsc.toGame(competition)
 }
 
-func (ec *ESPNClient) getRequest(endpoint string, c games.Competition, parameters map[string]string) (*http.Request, error) {
+func (ec Client) executeCall(endpoint string, c games.Competition, parameters map[string]string, response easyjson.Unmarshaler) error {
+	req, err := ec.getRequest(endpoint, c, parameters)
+	if err != nil {
+		return err
+	}
+
+	resp, err := ec.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if err := easyjson.UnmarshalFromReader(resp.Body, response); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ec *Client) getRequest(endpoint string, c games.Competition, parameters map[string]string) (*http.Request, error) {
 	ep, err := url.Parse(fmt.Sprintf(endpoint, ec.getCompetitionSlug(c)))
 	if err != nil {
 		return nil, err
@@ -902,7 +880,7 @@ func (ec *ESPNClient) getRequest(endpoint string, c games.Competition, parameter
 	return req, nil
 }
 
-func (ec *ESPNClient) getCompetitionSlug(c games.Competition) string {
+func (ec *Client) getCompetitionSlug(c games.Competition) string {
 	equivalents := map[games.Competition]string{
 		games.NFL:  "nfl",
 		games.NCAA: "college-football",

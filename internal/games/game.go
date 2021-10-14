@@ -5,6 +5,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"reflect"
 	"sort"
@@ -21,10 +22,11 @@ type GameHandler struct {
 	client   GameInfoClient
 	gameList sync.Map
 	queue    pubsub.Queue
+	clk      app.Clock
 }
 
-func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue) *GameHandler {
-	gh := &GameHandler{client: client, queue: queue}
+func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) *GameHandler {
+	gh := &GameHandler{client: client, queue: queue, clk: clk}
 	if getGames {
 		go func() {
 			gh.initGames()
@@ -46,7 +48,7 @@ func (gh *GameHandler) GetGames(c Competition) []Game {
 
 func (gh *GameHandler) GetGamesStartingIn(c Competition, d time.Duration) []Game {
 	var found []Game
-	offset := time.Now().UTC().Add(d).Truncate(time.Minute)
+	offset := gh.clk.Now().Add(d).Truncate(time.Minute)
 
 	for _, v := range gh.loadGames(c) {
 		if offset.Equal(v.Start.UTC().Truncate(time.Minute)) {

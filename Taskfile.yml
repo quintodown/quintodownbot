@@ -93,6 +93,7 @@ tasks:
       - install
     cmds:
       - go run github.com/mailru/easyjson/easyjson internal/pubsub/broadcast.go
+      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/espn.go
   mock:
     desc: Generate all mocks for testing
     run: once

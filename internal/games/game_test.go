@@ -5,6 +5,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mapp "github.com/quintodown/quintodownbot/mocks/app"
 	mgms "github.com/quintodown/quintodownbot/mocks/games"
 	mps "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
@@ -16,9 +17,10 @@ import (
 func TestGameHandler_GetGames(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
+	mclk := new(mapp.Clock)
 
 	t.Run("it should return an empty list when games shouldn't be initialised", func(t *testing.T) {
-		gh := games.NewGameHandler(gic, false, q)
+		gh := games.NewGameHandler(gic, false, q, mclk)
 
 		require.Empty(t, gh.GetGames(games.NFL))
 	})
@@ -30,7 +32,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 			return nil
 		}, errors.New("failing"))
 
-		gh := games.NewGameHandler(gic, true, q)
+		gh := games.NewGameHandler(gic, true, q, mclk)
 
 		<-initialised
 		require.Empty(t, gh.GetGames(games.NFL))
@@ -53,7 +55,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 			}
 		}, nil)
 
-		gh := games.NewGameHandler(gic, true, q)
+		gh := games.NewGameHandler(gic, true, q, mclk)
 
 		<-initialised
 
@@ -69,6 +71,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
+	mclk := new(mapp.Clock)
 
 	initialised := make(chan interface{})
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
@@ -84,19 +87,24 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 			},
 		}
 	}, nil)
+	mclk.On("Now").Once().Return(time.Now())
 
-	gh := games.NewGameHandler(gic, true, q)
+	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
 
 	getGames := gh.GetGamesStartingIn(games.NFL, time.Hour)
 	require.Len(t, getGames, 1)
 	require.Equal(t, "gfdsa", getGames[0].Id)
+
+	gic.AssertExpectations(t)
+	mclk.AssertExpectations(t)
 }
 
 func TestGameHandler_GetGame(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
+	mclk := new(mapp.Clock)
 
 	initialised := make(chan interface{})
 	g1 := games.Game{
@@ -114,7 +122,7 @@ func TestGameHandler_GetGame(t *testing.T) {
 		}
 	}, nil)
 
-	gh := games.NewGameHandler(gic, true, q)
+	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
 
@@ -123,12 +131,15 @@ func TestGameHandler_GetGame(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Equal(t, g1, game)
+
+		gic.AssertExpectations(t)
 	})
 
 	t.Run("it should fail when requested game not found", func(t *testing.T) {
 		_, err := gh.GetGame("12345")
 
 		require.EqualError(t, err, "game not found")
+		gic.AssertExpectations(t)
 	})
 }
 
@@ -255,6 +266,45 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		q.AssertExpectations(t)
 	})
 
+	t.Run("it should send game information when game has started", func(t *testing.T) {
+		gic, q, gh := initialiseGameHandler(startPlaying)
+
+		gic.On("GetGameInformation", games.NFL, "asdfg").
+			Once().
+			Return(games.Game{
+				Id:    "asdfg",
+				Start: startPlaying,
+				Status: games.GameStatus{
+					Period: 1,
+					State:  games.InProgressState,
+				},
+			}, nil)
+		q.On(
+			"Publish",
+			pubsub.GamesTopic.String(),
+			mock.MatchedBy(func(m *message.Message) bool {
+				return string(m.Payload) == "{\"id\":\"asdfg\","+
+					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
+					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"capacity\":0,\"indoor\":false},"+
+					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":1,"+
+					"\"state\":\"InProgressState\"},"+
+					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
+					"\"home_team\":{\"score\":0,\"name\":\"\","+
+					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"away_team\":{\"score\":0,\"name\":\"\","+
+					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"week_name\":\"\",\"competition\":\"NFL\","+
+					"\"last_game_change\":\"Started\"}"
+			}),
+		).Once().Return(nil)
+
+		gh.UpdateGamesInformation(true)
+
+		gic.AssertExpectations(t)
+		q.AssertExpectations(t)
+	})
+
 	t.Run("it should send game information when period has finished", func(t *testing.T) {
 		gic, q, gh := initialiseGameHandler(startPlaying)
 
@@ -335,6 +385,7 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Queue, *games.GameHandler) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
+	mclk := new(mapp.Clock)
 
 	initialised := make(chan interface{})
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
@@ -353,8 +404,9 @@ func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Q
 			},
 		}
 	}, nil)
+	mclk.On("Now").Once().Return(time.Now())
 
-	gh := games.NewGameHandler(gic, true, q)
+	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
 
