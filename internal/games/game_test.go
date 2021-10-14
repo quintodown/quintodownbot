@@ -148,7 +148,7 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 	startPlaying := time.Now().UTC().Add(-1 * time.Hour)
 
 	t.Run("it should not send any update when fails getting game update", func(t *testing.T) {
-		gic, q, gh := initialiseGameHandler(startPlaying)
+		gic, _, gh := initialiseGameHandler(startPlaying)
 
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
@@ -157,7 +157,6 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		gh.UpdateGamesInformation(true)
 
 		gic.AssertExpectations(t)
-		q.AssertExpectations(t)
 	})
 
 	t.Run("it should send game information when game has been rescheduled", func(t *testing.T) {
@@ -405,7 +404,7 @@ func initialiseGameHandler(startPlaying time.Time) (*mgms.GameInfoClient, *mps.Q
 			},
 		}
 	}, nil)
-	mclk.On("Now").Once().Return(time.Now())
+	mclk.On("Now").Once().Return(time.Now().UTC())
 
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
