@@ -34,10 +34,6 @@ func InitializeConfiguration(testBot bool, envFile []byte, envTestFile []byte) e
 }
 
 func NewApp(bp botProvider, hm *handlers.Manager) *App {
-	if bp == nil {
-		bp = provideBot
-	}
-
 	return &App{bp: bp, hm: hm}
 }
 
