@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/javiyt/tweetgram/internal/config"
+	"github.com/quintodown/quintodownbot/internal/config"
 	"github.com/stretchr/testify/require"
 )
 
