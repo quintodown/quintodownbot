@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/handlers"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/subosito/gotenv"
 )
 
@@ -34,10 +34,6 @@ func InitializeConfiguration(testBot bool, envFile []byte, envTestFile []byte) e
 }
 
 func NewApp(bp botProvider, hm *handlers.Manager) *App {
-	if bp == nil {
-		bp = provideBot
-	}
-
 	return &App{bp: bp, hm: hm}
 }
 

@@ -31,7 +31,7 @@ tasks:
         {{range $line := .CONTENT | trim | splitLines -}}
           echo {{$line}} >> env
           echo {{$line}} >> env.test
-        {{end}}
+        {{end}} 
       - echo "Env files generated, set up proper values for vars"
   setup:
     desc: Set up bot environment to work with
@@ -84,6 +84,7 @@ tasks:
       - install
     cmds:
       - go run golang.org/x/tools/cmd/stringer -type=TopicName internal/pubsub/broadcast.go
+      - go run golang.org/x/tools/cmd/stringer -type=GameChange,Competition,GameState internal/games/model.go
   json:
     desc: Generate json Marshal/Unmarshal functions
     run: once
@@ -92,6 +93,7 @@ tasks:
       - install
     cmds:
       - go run github.com/mailru/easyjson/easyjson internal/pubsub/broadcast.go
+      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/espn.go
   mock:
     desc: Generate all mocks for testing
     run: once
@@ -108,7 +110,7 @@ tasks:
       - install
       - generate
     cmds:
-      - go test -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic ./...
+      - go test -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic -shuffle on ./...
   mutation:
     desc: Run mutation testing
     deps:
