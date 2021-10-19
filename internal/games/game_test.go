@@ -140,6 +140,7 @@ func TestGameHandler_GetGame(t *testing.T) {
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
+	require.Eventually(t, func() bool { return len(gh.GetGames(games.NFL)) > 0 }, time.Second, time.Millisecond)
 
 	t.Run("it should return requested game", func(t *testing.T) {
 		game, err := gh.GetGame("asdfg")
