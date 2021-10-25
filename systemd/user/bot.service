@@ -7,7 +7,10 @@ Type=simple
 WorkingDirectory=/home/tweetgram/bin/
 ExecStart=/home/tweetgram/bin/tweetgram_bin
 Restart=always
-RestartSec=0
+RestartSec=5
+RuntimeMaxSec=21600
+StartLimitInterval=400
+StartLimitBurst=5
 SyslogIdentifier=tweetgram_bin
 [Install]
 WantedBy=multi-user.target
