@@ -5,12 +5,12 @@ import (
 	"testing"
 
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/javiyt/tweetgram/internal/pubsub"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/config"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/config"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
 	"github.com/stretchr/testify/mock"
 
 	tb "gopkg.in/tucnak/telebot.v2"
