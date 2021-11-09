@@ -1,10 +1,10 @@
-package handlers_error
+package handlerserror
 
 import (
 	"context"
 
-	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/sirupsen/logrus"
 )
 
@@ -26,9 +26,11 @@ func (eh *ErrorHandler) ExecuteHandlers() {
 	go func() {
 		for msg := range messages {
 			var m pubsub.ErrorEvent
+
 			if err := easyjson.Unmarshal(msg.Payload, &m); err != nil {
 				eh.log.Error(err)
 				msg.Ack()
+
 				continue
 			}
 

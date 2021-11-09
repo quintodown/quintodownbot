@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 
 type EventHandler interface {

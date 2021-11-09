@@ -2,6 +2,9 @@ package games_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
@@ -10,8 +13,6 @@ import (
 	mps "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestGameHandler_GetGames(t *testing.T) {
@@ -88,8 +89,10 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 
 	initialised := make(chan interface{})
 	now := time.Now().UTC()
+
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 		defer close(initialised)
+
 		return []games.Game{
 			{
 				Id:    "asdfg",
@@ -126,8 +129,10 @@ func TestGameHandler_GetGame(t *testing.T) {
 		Id:    "asdfg",
 		Start: time.Now().UTC().Add(5 * time.Hour),
 	}
+
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 		defer close(initialised)
+
 		return []games.Game{
 			g1,
 			{
@@ -168,6 +173,25 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
 			Return(games.Game{}, errors.New("testing"))
+
+		gh.UpdateGamesInformation(true)
+
+		gic.AssertExpectations(t)
+		gic = nil
+		gh = nil
+	})
+
+	t.Run("it should not send any update when there isn't any update", func(t *testing.T) {
+		gic, _, gh := initialiseGameHandler(t, startPlaying)
+
+		gic.On("GetGameInformation", games.NFL, "asdfg").
+			Once().
+			Return(games.Game{
+				Id:          "asdfg",
+				Start:       startPlaying,
+				Status:      games.GameStatus{State: games.InProgressState},
+				Competition: games.NFL,
+			}, nil)
 
 		gh.UpdateGamesInformation(true)
 
@@ -414,15 +438,19 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		q = nil
 		gh = nil
 	})
-
 }
 
-func initialiseGameHandler(t *testing.T, startPlaying time.Time) (*mgms.GameInfoClient, *mps.Queue, *games.GameHandler) {
+func initialiseGameHandler(t *testing.T, startPlaying time.Time) (
+	*mgms.GameInfoClient,
+	*mps.Queue,
+	*games.GameHandler,
+) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
 	mclk := new(mapp.Clock)
 
 	initialised := make(chan interface{})
+
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 		defer close(initialised)
 
