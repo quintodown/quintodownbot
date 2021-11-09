@@ -470,6 +470,7 @@ func (v scoreboard) toGames(c games.Competition, calendar []games.Week) []games.
 		for _, w := range calendar {
 			if t.UTC().After(w.Start.UTC()) && t.UTC().Before(w.End.UTC()) {
 				g.WeekName = w.Name
+
 				break
 			}
 		}
