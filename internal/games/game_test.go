@@ -187,7 +187,10 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		gic.On("GetGameInformation", games.NFL, "asdfg").
 			Once().
 			Return(games.Game{
-				Start: startPlaying,
+				Id:          "asdfg",
+				Start:       startPlaying,
+				Status:      games.GameStatus{State: games.InProgressState},
+				Competition: games.NFL,
 			}, nil)
 
 		gh.UpdateGamesInformation(true)
