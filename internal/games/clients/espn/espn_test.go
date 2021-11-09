@@ -3,15 +3,24 @@ package espn_test
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/games/clients/espn"
 	mapp "github.com/quintodown/quintodownbot/mocks/app"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
-	"time"
+)
+
+const (
+	eventEndpoint           = "https://site.api.espn.com/apis/site/v2/sports/football//summary?event=1&lang=es&region=us"
+	scoreboardEndpoint      = "https://site.api.espn.com/apis/site/v2/sports/football//scoreboard?lang=es&region=us"
+	scoreboardDatesEndpoint = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=" +
+		"20210909-20210916&lang=es&region=us"
 )
 
 func TestClient_GetGames(t *testing.T) {
@@ -28,7 +37,11 @@ func TestClient_GetGames(t *testing.T) {
 	t.Run("it should fail for non existing competition", func(t *testing.T) {
 		gms, err := espnc.GetGames(10)
 
-		require.EqualError(t, err, "Get \"https://site.api.espn.com/apis/site/v2/sports/football//scoreboard?lang=es&region=us\": competition not found")
+		require.EqualError(
+			t,
+			err,
+			fmt.Sprintf("Get \"%s\": competition not found", scoreboardEndpoint),
+		)
 		require.Empty(t, gms)
 	})
 
@@ -53,7 +66,11 @@ func TestClient_GetGames(t *testing.T) {
 
 		gms, err := espnc.GetGames(games.NFL)
 
-		require.EqualError(t, err, "Get \"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=20210909-20210916&lang=es&region=us\": no responder found")
+		require.EqualError(
+			t,
+			err,
+			fmt.Sprintf("Get \"%s\": no responder found", scoreboardDatesEndpoint),
+		)
 		require.Empty(t, gms)
 		mclk.AssertExpectations(t)
 	})
@@ -88,7 +105,11 @@ func TestClient_GetGameInformation(t *testing.T) {
 	t.Run("it should fail when wrong competition", func(t *testing.T) {
 		information, err := espnc.GetGameInformation(10, "1")
 
-		require.EqualError(t, err, "Get \"https://site.api.espn.com/apis/site/v2/sports/football//summary?event=1&lang=es&region=us\": no responder found")
+		require.EqualError(
+			t,
+			err,
+			fmt.Sprintf("Get \"%s\": no responder found", eventEndpoint),
+		)
 		require.Empty(t, information)
 	})
 
@@ -111,7 +132,7 @@ func TestClient_GetGameInformation(t *testing.T) {
 
 		marshal, _ := json.Marshal(information)
 		bytes, _ := os.ReadFile("testdata/game.golden.json")
-		
+
 		require.NoError(t, err)
 		require.JSONEq(t, string(bytes), string(marshal))
 	})
@@ -129,6 +150,7 @@ func registerMocksHTTP() {
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?lang=es&region=us",
 		func(req *http.Request) (*http.Response, error) {
 			sc, _ := os.ReadFile("testdata/scoreboard.json")
+
 			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
 		},
 	)
@@ -138,6 +160,7 @@ func registerMocksHTTP() {
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=20211007-20211014&lang=es&region=us",
 		func(req *http.Request) (*http.Response, error) {
 			sc, _ := os.ReadFile("testdata/scoreboard.json")
+
 			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
 		},
 	)
@@ -173,8 +196,8 @@ func registerMocksHTTP() {
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=3&lang=es&region=us",
 		func(req *http.Request) (*http.Response, error) {
 			sc, _ := os.ReadFile("testdata/game.json")
+
 			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
 		},
 	)
-
 }

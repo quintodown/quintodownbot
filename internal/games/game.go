@@ -2,15 +2,16 @@ package games
 
 import (
 	"errors"
+	"reflect"
+	"sort"
+	"sync"
+	"time"
+
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
 	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
-	"reflect"
-	"sort"
-	"sync"
-	"time"
 )
 
 type GameInfoClient interface {
@@ -27,6 +28,7 @@ type GameHandler struct {
 
 func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) *GameHandler {
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
+
 	if getGames {
 		go func() { gh.initGames() }()
 	}
@@ -46,6 +48,7 @@ func (gh *GameHandler) GetGames(c Competition) []Game {
 
 func (gh *GameHandler) GetGamesStartingIn(c Competition, d time.Duration) []Game {
 	var found []Game
+
 	offset := gh.clk.Now().Add(d).Truncate(time.Minute)
 
 	for _, v := range gh.loadGames(c) {
@@ -82,40 +85,26 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 				continue
 			}
 
-			if !reflect.DeepEqual(v, g) {
-				var lastGameChange GameChange
-				if !g.Start.Equal(v.Start) && v.Status.State != RescheduledState {
-					gameList[i].Start = g.Start
-					gameList[i].Status.State = RescheduledState
-					lastGameChange = Rescheduled
-				}
+			lastGameChange := gh.getLastGameChange(v, g)
+			switch lastGameChange {
+			case Rescheduled:
+				gameList[i].Start = g.Start
+				gameList[i].Status.State = RescheduledState
+			case HomeScore:
+				gameList[i].HomeTeam.Score = g.HomeTeam.Score
+			case AwayScore:
+				gameList[i].AwayTeam.Score = g.AwayTeam.Score
+			case Started:
+				gameList[i].Status.Period = 1
+				gameList[i].Status.DisplayClock = g.Status.DisplayClock
+			case PeriodFinished:
+				gameList[i].Status.Period = g.Status.Period
+				gameList[i].Status.DisplayClock = g.Status.DisplayClock
+			case GameFinished:
+				gameList[i].Status = g.Status
+			}
 
-				if g.HomeTeam.Score != v.HomeTeam.Score {
-					gameList[i].HomeTeam.Score = g.HomeTeam.Score
-					lastGameChange = HomeScore
-				}
-
-				if g.AwayTeam.Score != v.AwayTeam.Score {
-					gameList[i].AwayTeam.Score = g.AwayTeam.Score
-					lastGameChange = AwayScore
-				}
-
-				if g.Status.Period != v.Status.Period && g.Status.State == InProgressState {
-					gameList[i].Status.Period = g.Status.Period
-					gameList[i].Status.DisplayClock = g.Status.DisplayClock
-					if g.Status.Period == 1 {
-						lastGameChange = Started
-					} else {
-						lastGameChange = PeriodFinished
-					}
-
-				}
-
-				if g.Status.State == FinishedState && v.Status.State != FinishedState {
-					gameList[i].Status = g.Status
-					lastGameChange = GameFinished
-				}
-
+			if lastGameChange != NoChanges {
 				_ = gh.queue.Publish(
 					pubsub.GamesTopic.String(),
 					message.NewMessage(
@@ -148,6 +137,40 @@ func (gh *GameHandler) loadGames(c Competition) []Game {
 	}
 
 	return f.([]Game)
+}
+
+func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChange {
+	lastGameChange := NoChanges
+
+	if reflect.DeepEqual(oldGameInfo, newGameInfo) {
+		return lastGameChange
+	}
+
+	if !newGameInfo.Start.Equal(oldGameInfo.Start) && oldGameInfo.Status.State != RescheduledState {
+		lastGameChange = Rescheduled
+	}
+
+	if newGameInfo.HomeTeam.Score != oldGameInfo.HomeTeam.Score {
+		lastGameChange = HomeScore
+	}
+
+	if newGameInfo.AwayTeam.Score != oldGameInfo.AwayTeam.Score {
+		lastGameChange = AwayScore
+	}
+
+	if newGameInfo.Status.Period != oldGameInfo.Status.Period && newGameInfo.Status.State == InProgressState {
+		if newGameInfo.Status.Period == 1 {
+			lastGameChange = Started
+		} else {
+			lastGameChange = PeriodFinished
+		}
+	}
+
+	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
+		lastGameChange = GameFinished
+	}
+
+	return lastGameChange
 }
 
 func (g *Game) toGameEvent(lastGameChange GameChange) []byte {
@@ -204,5 +227,6 @@ func (g *Game) toGameEvent(lastGameChange GameChange) []byte {
 		Competition:    g.Competition.String(),
 		LastGameChange: lastGameChange.String(),
 	})
+
 	return mb
 }

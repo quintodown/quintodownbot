@@ -1,10 +1,11 @@
 package app_test
 
 import (
-	"github.com/quintodown/quintodownbot/internal/app"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/app"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUTCClock_Now(t *testing.T) {

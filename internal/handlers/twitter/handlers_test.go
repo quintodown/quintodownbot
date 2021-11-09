@@ -7,11 +7,11 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/mailru/easyjson"
 	ht "github.com/quintodown/quintodownbot/internal/handlers/twitter"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 	mb "github.com/quintodown/quintodownbot/mocks/bot"
 	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
-	"github.com/mailru/easyjson"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )

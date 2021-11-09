@@ -3,11 +3,11 @@ package handlerstelegram
 import (
 	"context"
 
+	"github.com/mailru/easyjson"
 	"github.com/quintodown/quintodownbot/internal/bot"
 	"github.com/quintodown/quintodownbot/internal/config"
 	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
-	"github.com/mailru/easyjson"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
