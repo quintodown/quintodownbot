@@ -181,6 +181,22 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 		gh = nil
 	})
 
+	t.Run("it should not send any update when there isn't any update", func(t *testing.T) {
+		gic, _, gh := initialiseGameHandler(t, startPlaying)
+
+		gic.On("GetGameInformation", games.NFL, "asdfg").
+			Once().
+			Return(games.Game{
+				Start: startPlaying,
+			}, nil)
+
+		gh.UpdateGamesInformation(true)
+
+		gic.AssertExpectations(t)
+		gic = nil
+		gh = nil
+	})
+
 	t.Run("it should send game information when game has been rescheduled", func(t *testing.T) {
 		gic, q, gh := initialiseGameHandler(t, startPlaying)
 
