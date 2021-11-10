@@ -22,4 +22,8 @@ linters:
     - paralleltest
     - gci
     - nolintlint
+    - tagliatelle
+    - dupl
+    - funlen
+    - gocognit
   fast: true

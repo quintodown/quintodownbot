@@ -8,14 +8,14 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/config"
-	ht "github.com/javiyt/tweetgram/internal/handlers/telegram"
-	"github.com/javiyt/tweetgram/internal/pubsub"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
+	"github.com/quintodown/quintodownbot/internal/config"
+	ht "github.com/quintodown/quintodownbot/internal/handlers/telegram"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 type messageNotSendError struct{}

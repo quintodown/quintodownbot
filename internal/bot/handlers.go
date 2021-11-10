@@ -6,8 +6,11 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/javiyt/tweetgram/internal/pubsub"
 	"github.com/mailru/easyjson"
+
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 func (b *Bot) handleStartCommand(m *TelegramMessage) {
