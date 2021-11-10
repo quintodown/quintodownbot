@@ -1,4 +1,7 @@
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch: # on button click
 name: Build and Deploy
 jobs:
@@ -143,3 +146,4 @@ jobs:
           script: |
             supervisorctl update
             supervisorctl restart ${{secrets.BOT_NAME}}
+            
