@@ -146,4 +146,3 @@ jobs:
           script: |
             supervisorctl update
             supervisorctl restart ${{secrets.BOT_NAME}}
-            
