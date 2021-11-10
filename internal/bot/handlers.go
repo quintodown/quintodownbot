@@ -9,8 +9,6 @@ import (
 	"github.com/mailru/easyjson"
 
 	"github.com/quintodown/quintodownbot/internal/pubsub"
-
-	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 func (b *Bot) handleStartCommand(m *TelegramMessage) {

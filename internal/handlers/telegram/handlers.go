@@ -9,7 +9,6 @@ import (
 	"github.com/quintodown/quintodownbot/internal/config"
 	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
-	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 type Telegram struct {

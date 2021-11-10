@@ -451,6 +451,8 @@ github.com/jarcoal/httpmock v1.0.8 h1:8kI16SoO6LQKgPE7PvQuV+YuD/inwHd7fOOe2zMbo4
 github.com/jarcoal/httpmock v1.0.8/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
 github.com/javiyt/go-twitter v0.0.1 h1:2r130uta8NnWGpul9raZ8AXuUlFaWhxHOJEbAp3m7CI=
 github.com/javiyt/go-twitter v0.0.1/go.mod h1:rt5N+vdKpp6cKvKIJoWFhNAuG4crEyCk5vYGwtxs1Ng=
+github.com/javiyt/tweetgram v0.0.0-20211110113606-f9f5d6321f16 h1:2+kkb4J4ZcC01jr03HHv8lbuzy8M/aA98ImkSzcwblM=
+github.com/javiyt/tweetgram v0.0.0-20211110113606-f9f5d6321f16/go.mod h1:M3S5nGD5Wp/r2jFXD7DMBf0/43r/LEBk9t4ftSPqWWw=
 github.com/javiyt/twitter-text-go v0.0.0-20211005143923-7fd06898aff9 h1:dRGBFN5cESNVPTvnVNelz3d58bFi/UVkRIVPdl4TA2s=
 github.com/javiyt/twitter-text-go v0.0.0-20211005143923-7fd06898aff9/go.mod h1:1epIq7AbU5flqlyoR77wiOY9vYe82sXjj4CLjuB3vOM=
 github.com/jessevdk/go-flags v1.4.0 h1:4IU2WS7AumrZ/40jfhf4QVDMsQwqA7VEHozFRrGARJA=

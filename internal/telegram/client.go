@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/javiyt/tweetgram/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/bot"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 

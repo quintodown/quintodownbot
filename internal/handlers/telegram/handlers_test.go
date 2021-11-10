@@ -8,6 +8,7 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/quintodown/quintodownbot/internal/bot"
 	"github.com/quintodown/quintodownbot/internal/config"
 	ht "github.com/quintodown/quintodownbot/internal/handlers/telegram"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
@@ -15,7 +16,6 @@ import (
 	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 type messageNotSendError struct{}

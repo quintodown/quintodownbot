@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/javiyt/tweetgram/internal/telegram"
+	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
