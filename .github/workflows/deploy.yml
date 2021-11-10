@@ -109,33 +109,33 @@ jobs:
     name: Deploy systemd configuration
     needs: build
     runs-on: ubuntu-latest
-    env:
-      SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-    if: env.SERVICE_SYS == 'systemd'
     steps:
       - name: Run new bot version
+        env:
+          SERVICE_SYS: ${{secrets.SERVICE_SYS}}
+        if: env.SERVICE_SYS == 'systemd'
         uses: appleboy/ssh-action@master
-        with:
-          host: ${{secrets.HOST}}
-          username: ${{secrets.USERNAME}}
-          key: ${{secrets.SSHKEY}}
-          port: ${{secrets.PORT}}
-          passphrase: ${{secrets.PASSPHRASE}}
-          script: |
-            systemctl --user stop ${{secrets.BINARY_NAME}}.service   
-            systemctl --user daemon-reload
-            systemctl --user start ${{secrets.BINARY_NAME}}.service   
-            systemctl --user status ${{secrets.BINARY_NAME}}.service
+          with:
+            host: ${{secrets.HOST}}
+            username: ${{secrets.USERNAME}}
+            key: ${{secrets.SSHKEY}}
+            port: ${{secrets.PORT}}
+            passphrase: ${{secrets.PASSPHRASE}}
+            script: |
+              systemctl --user stop ${{secrets.BINARY_NAME}}.service   
+              systemctl --user daemon-reload
+              systemctl --user start ${{secrets.BINARY_NAME}}.service   
+              systemctl --user status ${{secrets.BINARY_NAME}}.service
 
   deploy-supervisor:
     name: Deploy supervisor configuration
     needs: build
     runs-on: ubuntu-latest
-    env:
-      SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-    if: env.SERVICE_SYS == 'supervisor'
     steps:
       - name: Run new bot version
+        env:
+          SERVICE_SYS: ${{secrets.SERVICE_SYS}}
+        if: env.SERVICE_SYS == 'supervisor'
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.HOST}}
