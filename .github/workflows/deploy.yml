@@ -82,7 +82,7 @@ jobs:
         uses: appleboy/scp-action@master
         env:
           SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-        if: "${{ env.SERVICE_SYS == 'supervisor' }}"
+        if: env.SERVICE_SYS == 'supervisor'
         with:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
@@ -95,7 +95,7 @@ jobs:
         uses: appleboy/scp-action@master
         env:
           SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-        if: "${{ env.SERVICE_SYS == 'systemd' }}"
+        if: env.SERVICE_SYS == 'systemd'
         with:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-    if: "${{ env.SERVICE_SYS == 'systemd' }}"
+    if: env.SERVICE_SYS == 'systemd'
     steps:
       - name: Run new bot version
         uses: appleboy/ssh-action@master
@@ -133,7 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SERVICE_SYS: ${{secrets.SERVICE_SYS}}
-    if: "${{ env.SERVICE_SYS == 'supervisor' }}"
+    if: env.SERVICE_SYS == 'supervisor'
     steps:
       - name: Run new bot version
         uses: appleboy/ssh-action@master
@@ -144,5 +144,6 @@ jobs:
           port: ${{secrets.PORT}}
           passphrase: ${{secrets.PASSPHRASE}}
           script: |
-            supervisorctl reload
-            supervisorctl status
+            supervisorctl update
+            supervisorctl restart ${{secrets.BOT_NAME}}
+            

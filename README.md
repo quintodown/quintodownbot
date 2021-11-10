@@ -67,4 +67,3 @@ There's an action called deploy that you can trigger to deploy the bot. Some [se
 | BOT_NAME          | Name given to the bot                                               |
 | SERVICE_SYS       | Name of service used to keep process running: systemd or supervisor |
 | SUPERVISOR_FOLDER | Folder where supervisor configuration files are stored              |
-
