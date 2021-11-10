@@ -27,6 +27,7 @@ const (
 type urlParameters map[string]string
 
 //easyjson:json
+//nolint:tagliatelle
 type gameScore struct {
 	Boxscore struct {
 		Teams []struct {

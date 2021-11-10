@@ -217,15 +217,15 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+newTime.Format(time.RFC3339Nano)+"\","+
-					"\"name\":\"\",\"venue\":{\"full_name\":\"\",\"city\":\"\","+
+					"\"name\":\"\",\"venue\":{\"fullName\":\"\",\"city\":\"\","+
 					"\"state\":\"\",\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":0,"+
-					"\"state\":\"RescheduledState\"},\"weather\":{\"display_value\":\"\","+
-					"\"temperature\":0},\"home_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":0,\"name\":\"\",\"short_display_name\":\"\","+
-					"\"logo\":\"\",\"record\":\"\"},\"week_name\":\"\","+
-					"\"competition\":\"NFL\",\"last_game_change\":\"Rescheduled\"}"
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0,"+
+					"\"state\":\"RescheduledState\"},\"weather\":{\"displayValue\":\"\","+
+					"\"temperature\":0},\"homeTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":0,\"name\":\"\",\"shortDisplayName\":\"\","+
+					"\"logo\":\"\",\"record\":\"\"},\"weekName\":\"\","+
+					"\"competition\":\"NFL\",\"lastGameChange\":\"Rescheduled\"}"
 			}),
 		).Once().Return(nil)
 
@@ -254,17 +254,17 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
-					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\","+
 					"\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":0,"+
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0,"+
 					"\"state\":\"InProgressState\"},"+
-					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
-					"\"home_team\":{\"score\":7,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"week_name\":\"\",\"competition\":\"NFL\","+
-					"\"last_game_change\":\"HomeScore\"}"
+					"\"weather\":{\"displayValue\":\"\",\"temperature\":0},"+
+					"\"homeTeam\":{\"score\":7,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"weekName\":\"\",\"competition\":\"NFL\","+
+					"\"lastGameChange\":\"HomeScore\"}"
 			}),
 		).Once().Return(nil)
 
@@ -293,17 +293,17 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
-					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\","+
 					"\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":0,"+
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0,"+
 					"\"state\":\"InProgressState\"},"+
-					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
-					"\"home_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":7,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"week_name\":\"\",\"competition\":\"NFL\","+
-					"\"last_game_change\":\"AwayScore\"}"
+					"\"weather\":{\"displayValue\":\"\",\"temperature\":0},"+
+					"\"homeTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":7,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"weekName\":\"\",\"competition\":\"NFL\","+
+					"\"lastGameChange\":\"AwayScore\"}"
 			}),
 		).Once().Return(nil)
 
@@ -335,17 +335,17 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
-					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\","+
 					"\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":1,"+
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":1,"+
 					"\"state\":\"InProgressState\"},"+
-					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
-					"\"home_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"week_name\":\"\",\"competition\":\"NFL\","+
-					"\"last_game_change\":\"Started\"}"
+					"\"weather\":{\"displayValue\":\"\",\"temperature\":0},"+
+					"\"homeTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"weekName\":\"\",\"competition\":\"NFL\","+
+					"\"lastGameChange\":\"Started\"}"
 			}),
 		).Once().Return(nil)
 
@@ -377,17 +377,17 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
-					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\","+
 					"\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":2,"+
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":2,"+
 					"\"state\":\"InProgressState\"},"+
-					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
-					"\"home_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"week_name\":\"\",\"competition\":\"NFL\","+
-					"\"last_game_change\":\"PeriodFinished\"}"
+					"\"weather\":{\"displayValue\":\"\",\"temperature\":0},"+
+					"\"homeTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"weekName\":\"\",\"competition\":\"NFL\","+
+					"\"lastGameChange\":\"PeriodFinished\"}"
 			}),
 		).Once().Return(nil)
 
@@ -416,17 +416,17 @@ func TestGameHandler_UpdateGamesInformation(t *testing.T) {
 			mock.MatchedBy(func(m *message.Message) bool {
 				return string(m.Payload) == "{\"id\":\"asdfg\","+
 					"\"start\":\""+startPlaying.Format(time.RFC3339Nano)+"\",\"name\":\"\","+
-					"\"venue\":{\"full_name\":\"\",\"city\":\"\",\"state\":\"\","+
+					"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\","+
 					"\"capacity\":0,\"indoor\":false},"+
-					"\"status\":{\"clock\":0,\"display_clock\":\"\",\"period\":0,"+
+					"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0,"+
 					"\"state\":\"FinishedState\"},"+
-					"\"weather\":{\"display_value\":\"\",\"temperature\":0},"+
-					"\"home_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"away_team\":{\"score\":0,\"name\":\"\","+
-					"\"short_display_name\":\"\",\"logo\":\"\",\"record\":\"\"},"+
-					"\"week_name\":\"\",\"competition\":\"NFL\","+
-					"\"last_game_change\":\"GameFinished\"}"
+					"\"weather\":{\"displayValue\":\"\",\"temperature\":0},"+
+					"\"homeTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"awayTeam\":{\"score\":0,\"name\":\"\","+
+					"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"},"+
+					"\"weekName\":\"\",\"competition\":\"NFL\","+
+					"\"lastGameChange\":\"GameFinished\"}"
 			}),
 		).Once().Return(nil)
 

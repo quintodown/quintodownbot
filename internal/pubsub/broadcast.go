@@ -43,38 +43,47 @@ type TextEvent struct {
 
 //easyjson:json
 type GameEvent struct {
-	Id    string    `json:"id"`
-	Start time.Time `json:"start"`
-	Name  string    `json:"name"`
-	Venue struct {
-		FullName string `json:"full_name"`
-		City     string `json:"city"`
-		State    string `json:"state"`
-		Capacity int    `json:"capacity"`
-		Indoor   bool   `json:"indoor"`
-	} `json:"venue"`
-	Status struct {
-		Clock        float64 `json:"clock"`
-		DisplayClock string  `json:"display_clock"`
-		Period       int     `json:"period"`
-		State        string  `json:"state"`
-	} `json:"status"`
-	Weather struct {
-		DisplayValue string `json:"display_value"`
-		Temperature  int    `json:"temperature"`
-	} `json:"weather"`
-	HomeTeam       TeamScore `json:"home_team"`
-	AwayTeam       TeamScore `json:"away_team"`
-	WeekName       string    `json:"week_name"`
-	Competition    string    `json:"competition"`
-	LastGameChange string    `json:"last_game_change"`
+	Id             string      `json:"id"`
+	Start          time.Time   `json:"start"`
+	Name           string      `json:"name"`
+	Venue          GameVenue   `json:"venue"`
+	Status         GameStatus  `json:"status"`
+	Weather        GameWeather `json:"weather"`
+	HomeTeam       TeamScore   `json:"homeTeam"`
+	AwayTeam       TeamScore   `json:"awayTeam"`
+	WeekName       string      `json:"weekName"`
+	Competition    string      `json:"competition"`
+	LastGameChange string      `json:"lastGameChange"`
 }
 
 //easyjson:json
 type TeamScore struct {
 	Score            int    `json:"score"`
 	Name             string `json:"name"`
-	ShortDisplayName string `json:"short_display_name"`
+	ShortDisplayName string `json:"shortDisplayName"`
 	Logo             string `json:"logo"`
 	Record           string `json:"record"`
+}
+
+//easyjson:json
+type GameVenue struct {
+	FullName string `json:"fullName"`
+	City     string `json:"city"`
+	State    string `json:"state"`
+	Capacity int    `json:"capacity"`
+	Indoor   bool   `json:"indoor"`
+}
+
+//easyjson:json
+type GameStatus struct {
+	Clock        float64 `json:"clock"`
+	DisplayClock string  `json:"displayClock"`
+	Period       int     `json:"period"`
+	State        string  `json:"state"`
+}
+
+//easyjson:json
+type GameWeather struct {
+	DisplayValue string `json:"displayValue"`
+	Temperature  int    `json:"temperature"`
 }

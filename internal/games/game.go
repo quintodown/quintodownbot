@@ -136,7 +136,12 @@ func (gh *GameHandler) loadGames(c Competition) []Game {
 		return nil
 	}
 
-	return f.([]Game)
+	games, ok := f.([]Game)
+	if !ok {
+		return nil
+	}
+
+	return games
 }
 
 func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChange {
@@ -178,34 +183,20 @@ func (g *Game) toGameEvent(lastGameChange GameChange) []byte {
 		Id:    g.Id,
 		Start: g.Start,
 		Name:  g.Name,
-		Venue: struct {
-			FullName string `json:"full_name"`
-			City     string `json:"city"`
-			State    string `json:"state"`
-			Capacity int    `json:"capacity"`
-			Indoor   bool   `json:"indoor"`
-		}{
+		Venue: pubsub.GameVenue{
 			FullName: g.Venue.FullName,
 			City:     g.Venue.Address.City,
 			State:    g.Venue.Address.State,
 			Capacity: g.Venue.Capacity,
 			Indoor:   g.Venue.Indoor,
 		},
-		Status: struct {
-			Clock        float64 `json:"clock"`
-			DisplayClock string  `json:"display_clock"`
-			Period       int     `json:"period"`
-			State        string  `json:"state"`
-		}{
+		Status: pubsub.GameStatus{
 			Clock:        g.Status.Clock,
 			DisplayClock: g.Status.DisplayClock,
 			Period:       g.Status.Period,
 			State:        g.Status.State.String(),
 		},
-		Weather: struct {
-			DisplayValue string `json:"display_value"`
-			Temperature  int    `json:"temperature"`
-		}{
+		Weather: pubsub.GameWeather{
 			DisplayValue: g.Weather.DisplayValue,
 			Temperature:  g.Weather.Temperature,
 		},
