@@ -10,7 +10,7 @@ require (
 	github.com/subosito/gotenv v1.2.0
 	github.com/vektra/mockery/v2 v2.9.4
 	gopkg.in/tucnak/telebot.v2 v2.4.1
-	mvdan.cc/gofumpt v0.1.1
+	mvdan.cc/gofumpt v0.2.0
 )
 
 require (
@@ -40,7 +40,7 @@ require (
 	github.com/tetafro/godot v1.4.11 // indirect
 	github.com/timakin/bodyclose v0.0.0-20210704033933-f49887972144 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
+	golang.org/x/sys v0.0.0-20211102192858-4dd72447c267 // indirect
 	golang.org/x/term v0.0.0-20210916214954-140adaaadfaf // indirect
 	mvdan.cc/unparam v0.0.0-20210915133954-dcc0b62f2ca0 // indirect
 )
@@ -57,7 +57,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/zimmski/go-mutesting v0.0.0-20210610104036-6d9217011a00
-	golang.org/x/tools v0.1.7
+	golang.org/x/tools v0.1.8-0.20211102182255-bb4add04ddef
 )
 
 require (
@@ -111,12 +111,9 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gostaticanalysis/comment v1.4.2 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/javiyt/tweetgram v0.0.0-20211110113606-f9f5d6321f16 // indirect
 	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/jgautheron/goconst v1.5.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
@@ -125,7 +122,6 @@ require (
 	github.com/julz/importas v0.0.0-20210419104244-841f0c0fe66d // indirect
 	github.com/kisielk/errcheck v1.6.0 // indirect
 	github.com/kisielk/gotool v1.0.0 // indirect
-	github.com/kr/pretty v0.2.1 // indirect
 	github.com/kulti/thelper v0.4.0 // indirect
 	github.com/kyoh86/exportloopref v0.1.8 // indirect
 	github.com/ldez/gomoddirectives v0.2.2 // indirect
@@ -176,7 +172,7 @@ require (
 	github.com/yeya24/promlinter v0.1.0 // indirect
 	github.com/zimmski/go-tool v0.0.0-20150119110811-2dfdc9ac8439 // indirect
 	github.com/zimmski/osutil v0.0.0-20190128123334-0d0b3ca231ac // indirect
-	golang.org/x/mod v0.5.0 // indirect
+	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
