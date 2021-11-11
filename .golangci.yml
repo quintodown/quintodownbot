@@ -23,6 +23,5 @@ linters:
     - gci
     - nolintlint
     - dupl
-    - funlen
     - gocognit
   fast: true

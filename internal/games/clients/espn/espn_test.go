@@ -27,21 +27,16 @@ func TestClient_GetGames(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	client := &http.Client{}
 	mclk := new(mapp.Clock)
 
-	espnc := espn.NewESPNClient(client, mclk)
+	espnc := espn.NewESPNClient(&http.Client{}, mclk)
 
 	registerMocksHTTP()
 
 	t.Run("it should fail for non existing competition", func(t *testing.T) {
 		gms, err := espnc.GetGames(10)
 
-		require.EqualError(
-			t,
-			err,
-			fmt.Sprintf("Get \"%s\": competition not found", scoreboardEndpoint),
-		)
+		require.EqualError(t, err, fmt.Sprintf("Get \"%s\": competition not found", scoreboardEndpoint))
 		require.Empty(t, gms)
 	})
 
@@ -66,18 +61,13 @@ func TestClient_GetGames(t *testing.T) {
 
 		gms, err := espnc.GetGames(games.NFL)
 
-		require.EqualError(
-			t,
-			err,
-			fmt.Sprintf("Get \"%s\": no responder found", scoreboardDatesEndpoint),
-		)
+		require.EqualError(t, err, fmt.Sprintf("Get \"%s\": no responder found", scoreboardDatesEndpoint))
 		require.Empty(t, gms)
 		mclk.AssertExpectations(t)
 	})
 
 	t.Run("it should get games for current week", func(t *testing.T) {
-		mclk.On("Now").
-			Once().
+		mclk.On("Now").Once().
 			Return(time.Date(2021, 10, 10, 1, 1, 1, 1, time.UTC))
 
 		gms, err := espnc.GetGames(games.NFL)
@@ -139,38 +129,34 @@ func TestClient_GetGameInformation(t *testing.T) {
 }
 
 func registerMocksHTTP() {
+	scoreboardResponder := func(req *http.Request) (*http.Response, error) {
+		sc, _ := os.ReadFile("testdata/scoreboard.json")
+
+		return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
+	}
+
 	httpmock.RegisterResponder(
 		http.MethodGet,
-		"https://site.api.espn.com/apis/site/v2/sports/football//scoreboard?lang=es&region=us",
+		scoreboardEndpoint,
 		httpmock.NewErrorResponder(errors.New("competition not found")),
 	)
 
 	httpmock.RegisterResponder(
 		http.MethodGet,
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?lang=es&region=us",
-		func(req *http.Request) (*http.Response, error) {
-			sc, _ := os.ReadFile("testdata/scoreboard.json")
-
-			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
-		},
+		scoreboardResponder,
 	)
 
 	httpmock.RegisterResponder(
 		http.MethodGet,
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=20211007-20211014&lang=es&region=us",
-		func(req *http.Request) (*http.Response, error) {
-			sc, _ := os.ReadFile("testdata/scoreboard.json")
-
-			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
-		},
+		scoreboardResponder,
 	)
 
 	httpmock.RegisterResponder(
 		http.MethodGet,
 		"https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard?lang=es&region=us",
-		func(req *http.Request) (*http.Response, error) {
-			return httpmock.NewStringResponse(http.StatusOK, "[]"), nil
-		},
+		httpmock.NewStringResponder(http.StatusOK, "[]"),
 	)
 
 	httpmock.RegisterResponder(

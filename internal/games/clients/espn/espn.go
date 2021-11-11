@@ -198,38 +198,7 @@ type scoreboard struct {
 	Week struct {
 		Number int `json:"number"`
 	} `json:"week"`
-	Events []struct {
-		ID        string `json:"id"`
-		UID       string `json:"uid"`
-		Date      string `json:"date"`
-		Name      string `json:"name"`
-		ShortName string `json:"shortName"`
-		Season    struct {
-			Year int    `json:"year"`
-			Type int    `json:"type"`
-			Slug string `json:"slug"`
-		} `json:"season"`
-		Competitions []competition `json:"competitions"`
-		Weather      struct {
-			DisplayValue string `json:"displayValue"`
-			Temperature  int    `json:"temperature"`
-			ConditionID  string `json:"conditionId"`
-		} `json:"weather"`
-		Status struct {
-			Clock        float64 `json:"clock"`
-			DisplayClock string  `json:"displayClock"`
-			Period       int     `json:"period"`
-			Type         struct {
-				ID          string `json:"id"`
-				Name        string `json:"name"`
-				State       string `json:"state"`
-				Completed   bool   `json:"completed"`
-				Description string `json:"description"`
-				Detail      string `json:"detail"`
-				ShortDetail string `json:"shortDetail"`
-			} `json:"type"`
-		} `json:"status"`
-	} `json:"events"`
+	Events []Event `json:"events"`
 }
 
 //easyjson:json
@@ -242,21 +211,12 @@ type competition struct {
 		ID           string `json:"id"`
 		Abbreviation string `json:"abbreviation"`
 	} `json:"type"`
-	TimeValid             bool `json:"timeValid"`
-	NeutralSite           bool `json:"neutralSite"`
-	ConferenceCompetition bool `json:"conferenceCompetition"`
-	Recent                bool `json:"recent"`
-	Venue                 struct {
-		ID       string `json:"id"`
-		FullName string `json:"fullName"`
-		Address  struct {
-			City  string `json:"city"`
-			State string `json:"state"`
-		} `json:"address"`
-		Capacity int  `json:"capacity"`
-		Indoor   bool `json:"indoor"`
-	} `json:"venue"`
-	Competitors []struct {
+	TimeValid             bool  `json:"timeValid"`
+	NeutralSite           bool  `json:"neutralSite"`
+	ConferenceCompetition bool  `json:"conferenceCompetition"`
+	Recent                bool  `json:"recent"`
+	Venue                 Venue `json:"venue"`
+	Competitors           []struct {
 		ID       string `json:"id"`
 		UID      string `json:"uid"`
 		Type     string `json:"type"`
@@ -276,13 +236,6 @@ type competition struct {
 			Venue            struct {
 				ID string `json:"id"`
 			} `json:"venue"`
-			Links []struct {
-				Rel        []string `json:"rel"`
-				Href       string   `json:"href"`
-				Text       string   `json:"text"`
-				IsExternal bool     `json:"isExternal"`
-				IsPremium  bool     `json:"isPremium"`
-			} `json:"links"`
 			Logo string `json:"logo"`
 		} `json:"team"`
 		Score      string        `json:"score"`
@@ -294,7 +247,6 @@ type competition struct {
 			Summary      string `json:"summary"`
 		} `json:"records"`
 	} `json:"competitors"`
-	Notes  []interface{} `json:"notes"`
 	Status struct {
 		Clock        float64 `json:"clock"`
 		DisplayClock string  `json:"displayClock"`
@@ -309,42 +261,53 @@ type competition struct {
 			ShortDetail string `json:"shortDetail"`
 		} `json:"type"`
 	} `json:"status"`
-	Broadcasts []struct {
-		Market string   `json:"market"`
-		Names  []string `json:"names"`
-	} `json:"broadcasts"`
-	Tickets []struct {
-		Summary         string `json:"summary"`
-		NumberAvailable int    `json:"numberAvailable"`
-		Links           []struct {
-			Href string `json:"href"`
-		} `json:"links"`
-	} `json:"tickets"`
-	StartDate     string `json:"startDate"`
-	GeoBroadcasts []struct {
-		Type struct {
-			ID        string `json:"id"`
-			ShortName string `json:"shortName"`
+	StartDate string `json:"startDate"`
+}
+
+//easyjson:json
+type Venue struct {
+	ID       string `json:"id"`
+	FullName string `json:"fullName"`
+	Address  struct {
+		City  string `json:"city"`
+		State string `json:"state"`
+	} `json:"address"`
+	Capacity int  `json:"capacity"`
+	Indoor   bool `json:"indoor"`
+}
+
+//easyjson:json
+type Event struct {
+	ID        string `json:"id"`
+	UID       string `json:"uid"`
+	Date      string `json:"date"`
+	Name      string `json:"name"`
+	ShortName string `json:"shortName"`
+	Season    struct {
+		Year int    `json:"year"`
+		Type int    `json:"type"`
+		Slug string `json:"slug"`
+	} `json:"season"`
+	Competitions []competition `json:"competitions"`
+	Weather      struct {
+		DisplayValue string `json:"displayValue"`
+		Temperature  int    `json:"temperature"`
+		ConditionID  string `json:"conditionId"`
+	} `json:"weather"`
+	Status struct {
+		Clock        float64 `json:"clock"`
+		DisplayClock string  `json:"displayClock"`
+		Period       int     `json:"period"`
+		Type         struct {
+			ID          string `json:"id"`
+			Name        string `json:"name"`
+			State       string `json:"state"`
+			Completed   bool   `json:"completed"`
+			Description string `json:"description"`
+			Detail      string `json:"detail"`
+			ShortDetail string `json:"shortDetail"`
 		} `json:"type"`
-		Market struct {
-			ID   string `json:"id"`
-			Type string `json:"type"`
-		} `json:"market"`
-		Media struct {
-			ShortName string `json:"shortName"`
-		} `json:"media"`
-		Lang   string `json:"lang"`
-		Region string `json:"region"`
-	} `json:"geoBroadcasts"`
-	Odds []struct {
-		Provider struct {
-			ID       string `json:"id"`
-			Name     string `json:"name"`
-			Priority int    `json:"priority"`
-		} `json:"provider"`
-		Details   string  `json:"details"`
-		OverUnder float64 `json:"overUnder"`
-	} `json:"odds"`
+	} `json:"status"`
 }
 
 func (v gameScore) toGame(c games.Competition) (games.Game, error) {
@@ -436,65 +399,51 @@ func (v scoreboard) toCalendar() []games.Week {
 func (v scoreboard) toGames(c games.Competition, calendar []games.Week) []games.Game {
 	found := make([]games.Game, 0, len(v.Events))
 
-	for _, v := range v.Events {
-		t, err := time.Parse(timeLayout, v.Date)
+	for _, event := range v.Events {
+		t, err := time.Parse(timeLayout, event.Date)
 		if err != nil {
 			continue
 		}
 
 		g := games.Game{
-			Id:    v.ID,
-			Name:  v.Name,
+			Id:    event.ID,
+			Name:  event.Name,
 			Start: t.UTC(),
-			Venue: games.Venue{
-				FullName: v.Competitions[0].Venue.FullName,
-				Address: games.VenueAddress{
-					City:  v.Competitions[0].Venue.Address.City,
-					State: v.Competitions[0].Venue.Address.State,
-				},
-				Capacity: v.Competitions[0].Venue.Capacity,
-				Indoor:   v.Competitions[0].Venue.Indoor,
-			},
+			Venue: v.getVenue(event),
 			Status: games.GameStatus{
-				Clock:        v.Status.Clock,
-				DisplayClock: v.Status.DisplayClock,
-				Period:       v.Status.Period,
-				State:        getGameStatus(v.Competitions[0].Status.Type.Name),
+				Clock:        event.Status.Clock,
+				DisplayClock: event.Status.DisplayClock,
+				Period:       event.Status.Period,
+				State:        getGameStatus(event.Competitions[0].Status.Type.Name),
 			},
 			Weather: games.GameWeather{
-				DisplayValue: v.Weather.DisplayValue,
-				Temperature:  v.Weather.Temperature,
+				DisplayValue: event.Weather.DisplayValue,
+				Temperature:  event.Weather.Temperature,
 			},
 			Competition: c,
 		}
 
-		for _, w := range calendar {
-			if t.UTC().After(w.Start.UTC()) && t.UTC().Before(w.End.UTC()) {
-				g.WeekName = w.Name
+		g.WeekName = v.getWeekName(calendar, t.UTC())
 
-				break
-			}
-		}
-
-		for _, v := range v.Competitions[0].Competitors {
+		for _, competitor := range event.Competitions[0].Competitors {
 			record := ""
-			if len(v.Records) > 0 {
-				record = v.Records[0].Summary
+			if len(competitor.Records) > 0 {
+				record = competitor.Records[0].Summary
 			}
 
-			score, _ := strconv.Atoi(v.Score)
-			t := games.TeamScore{
+			score, _ := strconv.Atoi(competitor.Score)
+			teamScore := games.TeamScore{
 				Score:            score,
-				Name:             v.Team.DisplayName,
-				ShortDisplayName: v.Team.ShortDisplayName,
-				Logo:             v.Team.Logo,
+				Name:             competitor.Team.DisplayName,
+				ShortDisplayName: competitor.Team.ShortDisplayName,
+				Logo:             competitor.Team.Logo,
 				Record:           record,
 			}
 
-			if v.HomeAway == "home" {
-				g.HomeTeam = t
+			if competitor.HomeAway == "home" {
+				g.HomeTeam = teamScore
 			} else {
-				g.AwayTeam = t
+				g.AwayTeam = teamScore
 			}
 		}
 
@@ -502,6 +451,28 @@ func (v scoreboard) toGames(c games.Competition, calendar []games.Week) []games.
 	}
 
 	return found
+}
+
+func (v scoreboard) getVenue(event Event) games.Venue {
+	return games.Venue{
+		FullName: event.Competitions[0].Venue.FullName,
+		Address: games.VenueAddress{
+			City:  event.Competitions[0].Venue.Address.City,
+			State: event.Competitions[0].Venue.Address.State,
+		},
+		Capacity: event.Competitions[0].Venue.Capacity,
+		Indoor:   event.Competitions[0].Venue.Indoor,
+	}
+}
+
+func (v scoreboard) getWeekName(calendar []games.Week, t time.Time) string {
+	for _, w := range calendar {
+		if t.UTC().After(w.Start.UTC()) && t.UTC().Before(w.End.UTC()) {
+			return w.Name
+		}
+	}
+
+	return ""
 }
 
 type Client struct {
