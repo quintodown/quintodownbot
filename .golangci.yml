@@ -22,6 +22,5 @@ linters:
     - paralleltest
     - gci
     - nolintlint
-    - dupl
     - gocognit
   fast: true
