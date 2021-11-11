@@ -71,6 +71,7 @@ func TestHandlerStartAndHelpCommand(t *testing.T) {
 				m.SenderID,
 				commands[i].expected,
 			).Once().Return(nil, nil)
+
 			handler(m)
 
 			mockedBot.AssertExpectations(t)
