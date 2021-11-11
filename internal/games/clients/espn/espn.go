@@ -27,7 +27,6 @@ const (
 type urlParameters map[string]string
 
 //easyjson:json
-//nolint:tagliatelle
 type gameScore struct {
 	Boxscore struct {
 		Teams []struct {
@@ -66,91 +65,7 @@ type gameScore struct {
 			Precipitation int    `json:"precipitation"`
 		} `json:"weather"`
 	} `json:"gameInfo"`
-	Header struct {
-		ID     string `json:"id"`
-		UID    string `json:"uid"`
-		Season struct {
-			Year int `json:"year"`
-			Type int `json:"type"`
-		} `json:"season"`
-		TimeValid    bool `json:"timeValid"`
-		Competitions []struct {
-			ID                    string `json:"id"`
-			UID                   string `json:"uid"`
-			Date                  string `json:"date"`
-			NeutralSite           bool   `json:"neutralSite"`
-			ConferenceCompetition bool   `json:"conferenceCompetition"`
-			BoxscoreAvailable     bool   `json:"boxscoreAvailable"`
-			CommentaryAvailable   bool   `json:"commentaryAvailable"`
-			LiveAvailable         bool   `json:"liveAvailable"`
-			OnWatchESPN           bool   `json:"onWatchESPN"`
-			Recent                bool   `json:"recent"`
-			BoxscoreSource        string `json:"boxscoreSource"`
-			PlayByPlaySource      string `json:"playByPlaySource"`
-			Competitors           []struct {
-				ID       string `json:"id"`
-				UID      string `json:"uid"`
-				Order    int    `json:"order"`
-				HomeAway string `json:"homeAway"`
-				Winner   bool   `json:"winner"`
-				Team     struct {
-					ID             string `json:"id"`
-					UID            string `json:"uid"`
-					Location       string `json:"location"`
-					Name           string `json:"name"`
-					Nickname       string `json:"nickname"`
-					Abbreviation   string `json:"abbreviation"`
-					DisplayName    string `json:"displayName"`
-					Color          string `json:"color"`
-					AlternateColor string `json:"alternateColor"`
-					Logos          []struct {
-						Href   string   `json:"href"`
-						Width  int      `json:"width"`
-						Height int      `json:"height"`
-						Alt    string   `json:"alt"`
-						Rel    []string `json:"rel"`
-					} `json:"logos"`
-				} `json:"team"`
-				Score      string `json:"score"`
-				Linescores []struct {
-					DisplayValue string `json:"displayValue"`
-				} `json:"linescores"`
-				Record []struct {
-					Type         string `json:"type"`
-					Summary      string `json:"summary"`
-					DisplayValue string `json:"displayValue"`
-				} `json:"record"`
-				Possession bool `json:"possession"`
-			} `json:"competitors"`
-			Status struct {
-				Type struct {
-					ID          string `json:"id"`
-					Name        string `json:"name"`
-					State       string `json:"state"`
-					Completed   bool   `json:"completed"`
-					Description string `json:"description"`
-					Detail      string `json:"detail"`
-					ShortDetail string `json:"shortDetail"`
-				} `json:"type"`
-				DisplayClock string `json:"displayClock"`
-				Period       int    `json:"period"`
-			} `json:"status"`
-		} `json:"competitions"`
-		Week   int `json:"week"`
-		League struct {
-			ID           string `json:"id"`
-			UID          string `json:"uid"`
-			Name         string `json:"name"`
-			Abbreviation string `json:"abbreviation"`
-			Slug         string `json:"slug"`
-			IsTournament bool   `json:"isTournament"`
-			Links        []struct {
-				Rel  []string `json:"rel"`
-				Href string   `json:"href"`
-				Text string   `json:"text"`
-			} `json:"links"`
-		} `json:"league"`
-	} `json:"header"`
+	Header header `json:"header"`
 }
 
 //easyjson:json
@@ -198,7 +113,7 @@ type scoreboard struct {
 	Week struct {
 		Number int `json:"number"`
 	} `json:"week"`
-	Events []Event `json:"events"`
+	Events []event `json:"events"`
 }
 
 //easyjson:json
@@ -215,7 +130,7 @@ type competition struct {
 	NeutralSite           bool  `json:"neutralSite"`
 	ConferenceCompetition bool  `json:"conferenceCompetition"`
 	Recent                bool  `json:"recent"`
-	Venue                 Venue `json:"venue"`
+	Venue                 venue `json:"venue"`
 	Competitors           []struct {
 		ID       string `json:"id"`
 		UID      string `json:"uid"`
@@ -265,7 +180,7 @@ type competition struct {
 }
 
 //easyjson:json
-type Venue struct {
+type venue struct {
 	ID       string `json:"id"`
 	FullName string `json:"fullName"`
 	Address  struct {
@@ -277,7 +192,7 @@ type Venue struct {
 }
 
 //easyjson:json
-type Event struct {
+type event struct {
 	ID        string `json:"id"`
 	UID       string `json:"uid"`
 	Date      string `json:"date"`
@@ -307,6 +222,97 @@ type Event struct {
 			Detail      string `json:"detail"`
 			ShortDetail string `json:"shortDetail"`
 		} `json:"type"`
+	} `json:"status"`
+}
+
+//easyjson:json
+type header struct {
+	ID     string `json:"id"`
+	UID    string `json:"uid"`
+	Season struct {
+		Year int `json:"year"`
+		Type int `json:"type"`
+	} `json:"season"`
+	TimeValid    bool                `json:"timeValid"`
+	Competitions []headerCompetition `json:"competitions"`
+	Week         int                 `json:"week"`
+	League       struct {
+		ID           string `json:"id"`
+		UID          string `json:"uid"`
+		Name         string `json:"name"`
+		Abbreviation string `json:"abbreviation"`
+		Slug         string `json:"slug"`
+		IsTournament bool   `json:"isTournament"`
+		Links        []struct {
+			Rel  []string `json:"rel"`
+			Href string   `json:"href"`
+			Text string   `json:"text"`
+		} `json:"links"`
+	} `json:"league"`
+}
+
+//easyjson:json
+//nolint:tagliatelle
+type headerCompetition struct {
+	ID                    string `json:"id"`
+	UID                   string `json:"uid"`
+	Date                  string `json:"date"`
+	NeutralSite           bool   `json:"neutralSite"`
+	ConferenceCompetition bool   `json:"conferenceCompetition"`
+	BoxscoreAvailable     bool   `json:"boxscoreAvailable"`
+	CommentaryAvailable   bool   `json:"commentaryAvailable"`
+	LiveAvailable         bool   `json:"liveAvailable"`
+	OnWatchESPN           bool   `json:"onWatchESPN"`
+	Recent                bool   `json:"recent"`
+	BoxscoreSource        string `json:"boxscoreSource"`
+	PlayByPlaySource      string `json:"playByPlaySource"`
+	Competitors           []struct {
+		ID       string `json:"id"`
+		UID      string `json:"uid"`
+		Order    int    `json:"order"`
+		HomeAway string `json:"homeAway"`
+		Winner   bool   `json:"winner"`
+		Team     struct {
+			ID             string `json:"id"`
+			UID            string `json:"uid"`
+			Location       string `json:"location"`
+			Name           string `json:"name"`
+			Nickname       string `json:"nickname"`
+			Abbreviation   string `json:"abbreviation"`
+			DisplayName    string `json:"displayName"`
+			Color          string `json:"color"`
+			AlternateColor string `json:"alternateColor"`
+			Logos          []struct {
+				Href   string   `json:"href"`
+				Width  int      `json:"width"`
+				Height int      `json:"height"`
+				Alt    string   `json:"alt"`
+				Rel    []string `json:"rel"`
+			} `json:"logos"`
+		} `json:"team"`
+		Score      string `json:"score"`
+		Linescores []struct {
+			DisplayValue string `json:"displayValue"`
+		} `json:"linescores"`
+		Record []struct {
+			Type         string `json:"type"`
+			Summary      string `json:"summary"`
+			DisplayValue string `json:"displayValue"`
+		} `json:"record"`
+		Possession bool `json:"possession"`
+	} `json:"competitors"`
+	Status struct {
+		Type struct {
+			ID          string `json:"id"`
+			Name        string `json:"name"`
+			State       string `json:"state"`
+			Completed   bool   `json:"completed"`
+			Description string `json:"description"`
+			Detail      string `json:"detail"`
+			ShortDetail string `json:"shortDetail"`
+		} `json:"type"`
+		DisplayClock string `json:"displayClock"`
+		Period       int    `json:"period"`
 	} `json:"status"`
 }
 
@@ -453,7 +459,7 @@ func (v scoreboard) toGames(c games.Competition, calendar []games.Week) []games.
 	return found
 }
 
-func (v scoreboard) getVenue(event Event) games.Venue {
+func (v scoreboard) getVenue(event event) games.Venue {
 	return games.Venue{
 		FullName: event.Competitions[0].Venue.FullName,
 		Address: games.VenueAddress{
