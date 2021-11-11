@@ -23,5 +23,4 @@ linters:
     - gci
     - nolintlint
     - dupl
-    - gocognit
   fast: true
