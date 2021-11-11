@@ -42,6 +42,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 
 		<-initialised
 
+		require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
 		require.Empty(t, gh.GetGames(games.NFL))
 		gic.AssertExpectations(t)
 	})
@@ -71,9 +72,9 @@ func TestGameHandler_GetGames(t *testing.T) {
 		gh := games.NewGameHandler(gic, true, q, mclk)
 
 		<-initialised
+		require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
 
 		getGames := gh.GetGames(games.NFL)
-
 		require.Len(t, getGames, 2)
 		require.Condition(t, func() bool {
 			return getGames[0].Start.Before(getGames[1].Start)
@@ -109,7 +110,7 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
 	<-initialised
-	require.Eventually(t, func() bool { return len(gh.GetGames(games.NFL)) == 2 }, time.Second, time.Millisecond)
+	require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
 
 	getGames := gh.GetGamesStartingIn(games.NFL, time.Hour)
 	require.Len(t, getGames, 1)
