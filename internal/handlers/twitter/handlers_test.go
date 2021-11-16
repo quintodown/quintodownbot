@@ -158,7 +158,7 @@ func TestTwitter_ExecuteHandlersPhoto(t *testing.T) {
 	t.Run("it should send photo to twitter", func(t *testing.T) {
 		th, mockedQueue, mockedTwitter, _, photoChannel := getTwitterHandlerAndMocks(context.Background(), true)
 
-    mockedTwitter.On("SendUpdateWithPhoto", "testing caption", photoContent).
+		mockedTwitter.On("SendUpdateWithPhoto", "testing caption", photoContent).
 			Once().Return(nil)
 
 		th.ExecuteHandlers(context.Background())

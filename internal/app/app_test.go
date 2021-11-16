@@ -2,8 +2,7 @@ package app_test
 
 import (
 	"context"
-
-  "os"
+	"os"
 	"testing"
 
 	"github.com/quintodown/quintodownbot/internal/app"
