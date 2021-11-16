@@ -7,11 +7,11 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	ht "github.com/javiyt/tweetgram/internal/handlers/twitter"
-	"github.com/javiyt/tweetgram/internal/pubsub"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
 	"github.com/mailru/easyjson"
+	ht "github.com/quintodown/quintodownbot/internal/handlers/twitter"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -158,7 +158,7 @@ func TestTwitter_ExecuteHandlersPhoto(t *testing.T) {
 	t.Run("it should send photo to twitter", func(t *testing.T) {
 		th, mockedQueue, mockedTwitter, _, photoChannel := getTwitterHandlerAndMocks(context.Background(), true)
 
-		mockedTwitter.On("SendUpdateWithPhoto", "testing caption", photoContent).
+    mockedTwitter.On("SendUpdateWithPhoto", "testing caption", photoContent).
 			Once().Return(nil)
 
 		th.ExecuteHandlers(context.Background())

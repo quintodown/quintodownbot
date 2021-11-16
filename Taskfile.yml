@@ -31,7 +31,7 @@ tasks:
         {{range $line := .CONTENT | trim | splitLines -}}
           echo {{$line}} >> env
           echo {{$line}} >> env.test
-        {{end}}
+        {{end}} 
       - echo "Env files generated, set up proper values for vars"
   setup:
     desc: Set up bot environment to work with
@@ -102,10 +102,13 @@ tasks:
       - install
     cmds:
       - go run golang.org/x/tools/cmd/stringer -type=TopicName internal/pubsub/broadcast.go
+      - go run golang.org/x/tools/cmd/stringer -type=GameChange,Competition,GameState internal/games/model.go
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/model.go
     generates:
       - internal/pubsub/topicname_string.go
+      - internal/games/gamechange_string.go
   clean-stringer:
     desc: Remove all stringer generated files
     run: once
@@ -113,6 +116,7 @@ tasks:
       - find ./internal -type f -name '*_string.go' -delete
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/model.go
     silent: true
   json:
     desc: Generate json Marshal/Unmarshal functions
@@ -122,10 +126,13 @@ tasks:
       - install
     cmds:
       - go run github.com/mailru/easyjson/easyjson internal/pubsub/broadcast.go
+      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/espn.go
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/clients/espn/espn.go
     generates:
       - internal/pubsub/broadcast_easyjson.go
+      - internal/games/clients/espn/espn_easyjson.go
   clean-json:
     desc: Remove all json generated files
     run: once
@@ -133,6 +140,7 @@ tasks:
       - find ./internal -type f -name '*_easyjson.go' -delete
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/clients/espn/espn.go
     silent: true
   mock:
     desc: Generate all mocks for testing

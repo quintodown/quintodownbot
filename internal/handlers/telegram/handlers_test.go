@@ -8,12 +8,12 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/config"
-	ht "github.com/javiyt/tweetgram/internal/handlers/telegram"
-	"github.com/javiyt/tweetgram/internal/pubsub"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/config"
+	ht "github.com/quintodown/quintodownbot/internal/handlers/telegram"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -122,7 +122,6 @@ func TestTelegram_ExecuteHandlersPhoto(t *testing.T) {
 
 	t.Run("it should fail unmarshaling photo event", func(t *testing.T) {
 		th, mockedQueue, _, _, photoChannel := generateHandlerAndMocks(ctx, cfg, true)
-
 		mockedQueue.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
 			return string(m.Payload) ==
 				"{\"error\":\"parse error: unterminated string literal near offset 12 of '{\\\"asd\\\":\\\"qwer'\"}"
