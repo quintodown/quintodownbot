@@ -229,7 +229,7 @@ func mockAssertion(t *testing.T, gic *mgms.GameInfoClient, q *mps.Queue) {
 func initGameHandler(t *testing.T, startPlaying time.Time, g games.Game, e error, payload string) (
 	*mgms.GameInfoClient,
 	*mps.Queue,
-	*games.GameHandler,
+	games.Handler,
 ) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)

@@ -19,6 +19,13 @@ type GameInfoClient interface {
 	GetGameInformation(Competition, string) (Game, error)
 }
 
+type Handler interface {
+	GetGames(c Competition) []Game
+	GetGamesStartingIn(c Competition, d time.Duration) []Game
+	GetGame(id string) (Game, error)
+	UpdateGamesInformation(onlyPlaying bool)
+}
+
 type GameHandler struct {
 	client   GameInfoClient
 	gameList sync.Map
@@ -26,7 +33,7 @@ type GameHandler struct {
 	clk      app.Clock
 }
 
-func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) *GameHandler {
+func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) Handler {
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
 
 	if getGames {
