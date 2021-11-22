@@ -95,7 +95,7 @@ func (g *Games) sendGameUpdate(messages <-chan *message.Message) {
 		switch m.LastGameChange {
 		case games.Started.String():
 			gameText = g.getStartedGameMessage(m)
-		case games.GameFinished.String():
+		case games.Finished.String():
 			gameText = g.getFinishedGameMessage(m)
 		default:
 			msg.Ack()

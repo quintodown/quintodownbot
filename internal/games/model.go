@@ -14,7 +14,7 @@ const (
 	HomeScore
 	AwayScore
 	PeriodFinished
-	GameFinished
+	Finished
 )
 
 const (

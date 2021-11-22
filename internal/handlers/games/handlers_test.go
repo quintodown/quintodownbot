@@ -41,7 +41,7 @@ func TestGames_ExecuteHandlersFails(t *testing.T) {
 	q.AssertExpectations(t)
 }
 
-func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
+func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 	t.Run("it does nothing cause no games playing", func(t *testing.T) {
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		g, _, q, gh := initGameHandlerAndMocks(ctx)
@@ -49,30 +49,6 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) { called <- true })
-
-		g.ExecuteHandlers(ctx)
-		<-called
-		cancelFunc()
-
-		gh.AssertExpectations(t)
-		q.AssertExpectations(t)
-		close(called)
-	})
-
-	t.Run("it fails when message couldn't be parsed", func(t *testing.T) {
-		ctx, cancelFunc := context.WithCancel(context.Background())
-		g, c, q, gh := initGameHandlerAndMocks(ctx)
-
-		called := make(chan interface{})
-
-		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
-			sendMessageToChannel(t, c, []byte("{["), true)
-			called <- true
-		})
-		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
-			return string(m.Payload) == "{\"error\":\"parse error: EOF reached while skipping array/object or token "+
-				"near offset 2 of ''\"}"
-		})).Once().Return(nil)
 
 		g.ExecuteHandlers(ctx)
 		<-called
@@ -104,26 +80,20 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 	})
 }
 
-func TestGames_ExecuteHandlersGames(t *testing.T) {
-	t.Run("it sends game message", func(t *testing.T) {
+func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
+	t.Run("it fails when message couldn't be parsed", func(t *testing.T) {
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		g, c, q, gh := initGameHandlerAndMocks(ctx)
 
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
-			b, _ := easyjson.Marshal(pubsub.GameEvent{
-				LastGameChange: games2.GameFinished.String(),
-				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Score: 1, Record: "1-2"},
-				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Score: 2, Record: "2-1"},
-			})
-			sendMessageToChannel(t, c, b, true)
-
+			sendMessageToChannel(t, c, []byte("{["), true)
 			called <- true
 		})
-		q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
-			return string(message.Payload) == "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
-				"finalizado con el resultado de 2 - 1\"}"
+		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
+			return string(m.Payload) == "{\"error\":\"parse error: EOF reached while skipping array/object or token "+
+				"near offset 2 of ''\"}"
 		})).Once().Return(nil)
 
 		g.ExecuteHandlers(ctx)
@@ -134,6 +104,102 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 		q.AssertExpectations(t)
 		close(called)
 	})
+
+	t.Run("it fails sending message after game update", func(t *testing.T) {
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		g, c, q, gh := initGameHandlerAndMocks(ctx)
+
+		called := make(chan interface{})
+
+		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
+			b, _ := easyjson.Marshal(pubsub.GameEvent{
+				LastGameChange: games2.Started.String(),
+				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Record: "1-2"},
+				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Record: "2-1"},
+				Venue: pubsub.GameVenue{
+					City:  "TestCity",
+					State: "TestState",
+				},
+			})
+			sendMessageToChannel(t, c, b, false)
+
+			called <- true
+		})
+		q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
+			return string(message.Payload) == "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
+				"iniciado. Se juega en  (TestCity, TestState)\"}"
+		})).Once().Return(errors.New("error sending message to queue"))
+		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
+			return string(message.Payload) == "{\"error\":\"error sending message to queue\"}"
+		})).Once().Return(nil)
+
+		g.ExecuteHandlers(ctx)
+		<-called
+		cancelFunc()
+
+		gh.AssertExpectations(t)
+		q.AssertExpectations(t)
+		close(called)
+	})
+}
+
+func TestGames_ExecuteHandlersGames(t *testing.T) {
+	testData := map[string]struct {
+		gameEvent pubsub.GameEvent
+		payload   string
+	}{
+		"it sends game message when game started": {
+			gameEvent: pubsub.GameEvent{
+				LastGameChange: games2.Started.String(),
+				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Record: "1-2"},
+				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Record: "2-1"},
+				Venue: pubsub.GameVenue{
+					City:  "TestCity",
+					State: "TestState",
+				},
+			},
+			payload: "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
+				"iniciado. Se juega en  (TestCity, TestState)\"}",
+		},
+		"it sends game message when game finished": {
+			gameEvent: pubsub.GameEvent{
+				LastGameChange: games2.Finished.String(),
+				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Score: 1, Record: "1-2"},
+				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Score: 2, Record: "2-1"},
+			},
+			payload: "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
+				"finalizado con el resultado de 2 - 1\"}",
+		},
+	}
+
+	for name, data := range testData {
+		td := data
+
+		t.Run(name, func(t *testing.T) {
+			ctx, cancelFunc := context.WithCancel(context.Background())
+			g, c, q, gh := initGameHandlerAndMocks(ctx)
+
+			called := make(chan interface{})
+
+			gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
+				b, _ := easyjson.Marshal(td.gameEvent)
+				sendMessageToChannel(t, c, b, true)
+
+				called <- true
+			})
+			q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
+				return string(message.Payload) == td.payload
+			})).Once().Return(nil)
+
+			g.ExecuteHandlers(ctx)
+			<-called
+			cancelFunc()
+
+			gh.AssertExpectations(t)
+			q.AssertExpectations(t)
+			close(called)
+		})
+	}
 }
 
 func initGameHandlerAndMocks(ctx context.Context) (

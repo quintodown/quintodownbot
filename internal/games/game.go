@@ -107,7 +107,7 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 			case PeriodFinished:
 				gameList[i].Status.Period = g.Status.Period
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
-			case GameFinished:
+			case Finished:
 				gameList[i].Status = g.Status
 			}
 
@@ -179,7 +179,7 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 	}
 
 	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
-		lastGameChange = GameFinished
+		lastGameChange = Finished
 	}
 
 	return lastGameChange

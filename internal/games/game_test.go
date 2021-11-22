@@ -304,7 +304,7 @@ func gameFinishedPayload(startPlaying time.Time) string {
 		"\"awayTeam\":{\"score\":0,\"name\":\"\"," +
 		"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"}," +
 		"\"weekName\":\"\",\"competition\":\"NFL\"," +
-		"\"lastGameChange\":\"GameFinished\"}"
+		"\"lastGameChange\":\"Finished\"}"
 }
 
 func endPeriodPayload(startPlaying time.Time) string {
