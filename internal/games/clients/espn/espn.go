@@ -2,11 +2,12 @@ package espn
 
 import (
 	"fmt"
-	"github.com/quintodown/quintodownbot/internal/clock"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/clock"
 
 	"github.com/mailru/easyjson"
 	"github.com/quintodown/quintodownbot/internal/games"

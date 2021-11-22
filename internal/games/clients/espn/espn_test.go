@@ -9,10 +9,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/quintodown/quintodownbot/mocks/clock"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/games/clients/espn"
-	mapp "github.com/quintodown/quintodownbot/mocks/app"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,7 +28,7 @@ func TestClient_GetGames(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	mclk := new(mapp.Clock)
+	mclk := new(clock.Clock)
 
 	espnc := espn.NewESPNClient(&http.Client{}, mclk)
 
@@ -86,9 +87,7 @@ func TestClient_GetGameInformation(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	client := &http.Client{}
-	mclk := new(mapp.Clock)
-
-	espnc := espn.NewESPNClient(client, mclk)
+	espnc := espn.NewESPNClient(client, new(clock.Clock))
 
 	registerMocksHTTP()
 

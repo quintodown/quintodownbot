@@ -2,11 +2,12 @@ package games
 
 import (
 	"errors"
-	"github.com/quintodown/quintodownbot/internal/clock"
 	"reflect"
 	"sort"
 	"sync"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/clock"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"

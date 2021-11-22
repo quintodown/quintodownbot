@@ -1,8 +1,9 @@
 package games
 
 import (
-	"github.com/quintodown/quintodownbot/internal/clock"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/clock"
 )
 
 const (

@@ -5,6 +5,10 @@ package app
 
 import (
 	"crypto/tls"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/quintodown/quintodownbot/internal/clock"
 	"github.com/quintodown/quintodownbot/internal/games"
@@ -12,9 +16,6 @@ import (
 	proxy_client "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
 	"github.com/quintodown/quintodownbot/internal/handlers"
 	handlersgames "github.com/quintodown/quintodownbot/internal/handlers/games"
-	"net/http"
-	"os"
-	"time"
 
 	"github.com/quintodown/quintodownbot/internal/telegram"
 

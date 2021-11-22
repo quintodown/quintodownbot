@@ -1,9 +1,10 @@
 package clock_test
 
 import (
-	"github.com/quintodown/quintodownbot/internal/clock"
 	"testing"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/clock"
 
 	"github.com/stretchr/testify/require"
 )

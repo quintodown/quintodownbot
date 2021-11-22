@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/quintodown/quintodownbot/mocks/clock"
+
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
-	mapp "github.com/quintodown/quintodownbot/mocks/app"
 	mgms "github.com/quintodown/quintodownbot/mocks/games"
 	mps "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
@@ -17,7 +18,7 @@ import (
 
 func TestGameHandler_GetGames(t *testing.T) {
 	t.Run("it should return an empty list when games shouldn't be initialised", func(t *testing.T) {
-		gh := games.NewGameHandler(new(mgms.GameInfoClient), false, new(mps.Queue), new(mapp.Clock))
+		gh := games.NewGameHandler(new(mgms.GameInfoClient), false, new(mps.Queue), new(clock.Clock))
 
 		require.Empty(t, gh.GetGames(games.NFL))
 	})
@@ -32,7 +33,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 			return nil
 		}, errors.New("failing"))
 
-		gh := games.NewGameHandler(gic, true, new(mps.Queue), new(mapp.Clock))
+		gh := games.NewGameHandler(gic, true, new(mps.Queue), new(clock.Clock))
 
 		<-initialised
 
@@ -60,7 +61,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 			}
 		}, nil)
 
-		gh := games.NewGameHandler(gic, true, new(mps.Queue), new(mapp.Clock))
+		gh := games.NewGameHandler(gic, true, new(mps.Queue), new(clock.Clock))
 
 		<-initialised
 		require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
@@ -77,7 +78,7 @@ func TestGameHandler_GetGames(t *testing.T) {
 func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
-	mclk := new(mapp.Clock)
+	mclk := new(clock.Clock)
 
 	initialised := make(chan interface{})
 	now := time.Now().UTC()
@@ -114,7 +115,7 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 func TestGameHandler_GetGame(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
-	mclk := new(mapp.Clock)
+	mclk := new(clock.Clock)
 
 	initialised := make(chan interface{})
 	g1 := games.Game{
@@ -233,7 +234,7 @@ func initGameHandler(t *testing.T, startPlaying time.Time, g games.Game, e error
 ) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
-	mclk := new(mapp.Clock)
+	mclk := new(clock.Clock)
 
 	initialised := make(chan interface{})
 
