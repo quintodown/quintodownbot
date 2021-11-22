@@ -3,7 +3,7 @@ package games
 import (
 	"time"
 
-	"github.com/quintodown/quintodownbot/internal/app"
+	"github.com/quintodown/quintodownbot/internal/clock"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	HomeScore
 	AwayScore
 	PeriodFinished
-	GameFinished
+	Finished
 )
 
 const (
@@ -92,7 +92,7 @@ type GameWeather struct {
 	Temperature  int
 }
 
-func (g *Game) isGameInProgress(clk app.Clock) bool {
+func (g *Game) isGameInProgress(clk clock.Clock) bool {
 	return clk.Now().After(g.Start.UTC()) && !g.hasFinishedGame()
 }
 

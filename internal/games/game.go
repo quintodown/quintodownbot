@@ -7,10 +7,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/quintodown/quintodownbot/internal/clock"
+
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
-	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 
@@ -19,14 +20,21 @@ type GameInfoClient interface {
 	GetGameInformation(Competition, string) (Game, error)
 }
 
+type Handler interface {
+	GetGames(c Competition) []Game
+	GetGamesStartingIn(c Competition, d time.Duration) []Game
+	GetGame(id string) (Game, error)
+	UpdateGamesInformation(onlyPlaying bool)
+}
+
 type GameHandler struct {
 	client   GameInfoClient
 	gameList sync.Map
 	queue    pubsub.Queue
-	clk      app.Clock
+	clk      clock.Clock
 }
 
-func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) *GameHandler {
+func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk clock.Clock) Handler {
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
 
 	if getGames {
@@ -100,7 +108,7 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 			case PeriodFinished:
 				gameList[i].Status.Period = g.Status.Period
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
-			case GameFinished:
+			case Finished:
 				gameList[i].Status = g.Status
 			}
 
@@ -172,7 +180,7 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 	}
 
 	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
-		lastGameChange = GameFinished
+		lastGameChange = Finished
 	}
 
 	return lastGameChange

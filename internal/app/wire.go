@@ -4,15 +4,23 @@
 package app
 
 import (
+	"crypto/tls"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/quintodown/quintodownbot/internal/clock"
+	"github.com/quintodown/quintodownbot/internal/games"
+	"github.com/quintodown/quintodownbot/internal/games/clients/espn"
+	proxy_client "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
+	"github.com/quintodown/quintodownbot/internal/handlers"
+	handlersgames "github.com/quintodown/quintodownbot/internal/handlers/games"
 
 	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
-	"github.com/quintodown/quintodownbot/internal/handlers"
 	hse "github.com/quintodown/quintodownbot/internal/handlers/error"
 	hstl "github.com/quintodown/quintodownbot/internal/handlers/telegram"
 	hstw "github.com/quintodown/quintodownbot/internal/handlers/twitter"
@@ -29,14 +37,26 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
+const updateGamesInformationTicker = time.Minute
+
 var (
-	twitterClient = wire.NewSet(provideTwitterHttpClient, provideTwitterClient, wire.Bind(new(bot.TwitterClient), new(*twitter.Client)))
-	queue         = wire.NewSet(provideGoChannelQueue, wire.Bind(new(pubsub.Queue), new(*gochannel.GoChannel)))
 	queueInstance *gochannel.GoChannel
+	twitterClient = wire.NewSet(
+		provideTwitterHttpClient,
+		provideTwitterClient,
+		wire.Bind(new(bot.TwitterClient), new(*twitter.Client)),
+	)
+	queue        = wire.NewSet(provideGoChannelQueue, wire.Bind(new(pubsub.Queue), new(*gochannel.GoChannel)))
+	gamesHandler = wire.NewSet(
+		provideGameInfoClient,
+		provideGameHandler,
+		provideGames,
+	)
 )
 
 func ProvideApp() (*App, func(), error) {
 	panic(wire.Build(
+		wire.NewSet(clock.NewUTCClock, wire.Bind(new(clock.Clock), new(clock.UTCClock))),
 		provideBotProvider,
 		twitterClient,
 		provideConfiguration,
@@ -47,6 +67,7 @@ func ProvideApp() (*App, func(), error) {
 		provideTwitterHandler,
 		provideErrorHandler,
 		provideHandlerManager,
+		gamesHandler,
 		NewApp,
 	))
 }
@@ -175,6 +196,43 @@ func provideErrorHandler(pubsub.Queue, *logrus.Logger) *hse.ErrorHandler {
 	return &hse.ErrorHandler{}
 }
 
-func provideHandlerManager(tlh *hstl.Telegram, twh *hstw.Twitter, eh *hse.ErrorHandler) *handlers.Manager {
-	return handlers.NewHandlersManager(tlh, twh, eh)
+func provideHandlerManager(
+	tlh *hstl.Telegram,
+	twh *hstw.Twitter,
+	eh *hse.ErrorHandler,
+	gh *handlersgames.Games,
+) *handlers.Manager {
+	return handlers.NewHandlersManager(tlh, twh, eh, gh)
+}
+
+func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {
+	return []handlersgames.Option{
+		handlersgames.WithGameHandler(gh),
+		handlersgames.WithConfig(handlersgames.Config{UpdateGamesInformationTicker: updateGamesInformationTicker}),
+		handlersgames.WithQueue(q),
+	}
+}
+
+func provideGames(games.Handler, pubsub.Queue) *handlersgames.Games {
+	wire.Build(provideGameOptions, handlersgames.NewGames)
+	return &handlersgames.Games{}
+}
+
+func provideGameHandler(gc games.GameInfoClient, q pubsub.Queue, clk clock.Clock) games.Handler {
+	return games.NewGameHandler(gc, true, q, clk)
+}
+
+func provideGameInfoClient(clk clock.Clock) games.GameInfoClient {
+	return proxy_client.NewProxyClient(proxy_client.WithESPNClient(espn.NewESPNClient(provideHTTClient(), clk)))
+}
+
+func provideHTTClient() *http.Client {
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = 5
+	httpClient := retryClient.StandardClient()
+	httpClient.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	return httpClient
 }

@@ -7,8 +7,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/quintodown/quintodownbot/internal/clock"
+
 	"github.com/mailru/easyjson"
-	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/games"
 )
 
@@ -483,10 +484,10 @@ func (v scoreboard) getWeekName(calendar []games.Week, t time.Time) string {
 
 type Client struct {
 	client *http.Client
-	clk    app.Clock
+	clk    clock.Clock
 }
 
-func NewESPNClient(c *http.Client, clk app.Clock) games.GameInfoClient {
+func NewESPNClient(c *http.Client, clk clock.Clock) games.GameInfoClient {
 	return &Client{client: c, clk: clk}
 }
 
