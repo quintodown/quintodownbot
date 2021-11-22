@@ -2,6 +2,7 @@ package games
 
 import (
 	"errors"
+	"github.com/quintodown/quintodownbot/internal/clock"
 	"reflect"
 	"sort"
 	"sync"
@@ -10,7 +11,6 @@ import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
-	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 
@@ -30,10 +30,10 @@ type GameHandler struct {
 	client   GameInfoClient
 	gameList sync.Map
 	queue    pubsub.Queue
-	clk      app.Clock
+	clk      clock.Clock
 }
 
-func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk app.Clock) Handler {
+func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, clk clock.Clock) Handler {
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
 
 	if getGames {

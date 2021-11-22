@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/golangci/golangci-lint v1.43.0
+	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/javiyt/go-twitter v0.0.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.7.0
@@ -111,6 +112,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gostaticanalysis/comment v1.4.2 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

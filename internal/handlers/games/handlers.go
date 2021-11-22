@@ -43,7 +43,7 @@ func WithQueue(q pubsub.Queue) Option {
 	}
 }
 
-func NewGames(options ...Option) handlers.EventHandler {
+func NewGames(options ...Option) *Games {
 	g := &Games{}
 
 	for _, o := range options {
