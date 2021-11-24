@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/javiyt/tweetgram/internal/app"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/handlers"
+	"github.com/quintodown/quintodownbot/internal/app"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/stretchr/testify/require"
 
-	mockBot "github.com/javiyt/tweetgram/mocks/bot"
+	mockBot "github.com/quintodown/quintodownbot/mocks/bot"
 )
 
 type startAppError struct{}

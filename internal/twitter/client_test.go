@@ -11,7 +11,7 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/jarcoal/httpmock"
 	gt "github.com/javiyt/go-twitter/twitter"
-	"github.com/javiyt/tweetgram/internal/twitter"
+	"github.com/quintodown/quintodownbot/internal/twitter"
 	"github.com/stretchr/testify/require"
 )
 

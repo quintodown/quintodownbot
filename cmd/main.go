@@ -9,7 +9,7 @@ import (
 
 	_ "embed"
 
-	"github.com/javiyt/tweetgram/internal/app"
+	"github.com/quintodown/quintodownbot/internal/app"
 )
 
 //nolint:gochecknoglobals
