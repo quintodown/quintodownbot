@@ -122,6 +122,7 @@ func TestTelegram_ExecuteHandlersPhoto(t *testing.T) {
 
 	t.Run("it should fail unmarshaling photo event", func(t *testing.T) {
 		th, mockedQueue, _, _, photoChannel := generateHandlerAndMocks(ctx, cfg, true)
+
 		mockedQueue.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
 			return string(m.Payload) ==
 				"{\"error\":\"parse error: unterminated string literal near offset 12 of '{\\\"asd\\\":\\\"qwer'\"}"

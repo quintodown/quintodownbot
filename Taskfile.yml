@@ -31,7 +31,7 @@ tasks:
         {{range $line := .CONTENT | trim | splitLines -}}
           echo {{$line}} >> env
           echo {{$line}} >> env.test
-        {{end}} 
+        {{end}}
       - echo "Env files generated, set up proper values for vars"
   setup:
     desc: Set up bot environment to work with
