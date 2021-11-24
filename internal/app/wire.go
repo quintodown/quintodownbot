@@ -52,21 +52,20 @@ var (
 	telegramDeps = wire.NewSet(provideConfiguration, provideTBot, queue)
 	twitterDeps  = wire.NewSet(provideConfiguration, twitterClient, queue)
 	errorDeps    = wire.NewSet(provideConfiguration, queue, provideLogger)
-	gamesHandler = wire.NewSet(
+	gamesDeps    = wire.NewSet(
+		wire.NewSet(clock.NewUTCClock, wire.Bind(new(clock.Clock), new(clock.UTCClock))),
+		queue,
 		provideGameInfoClient,
 		provideGameHandler,
-		provideGames,
 	)
 )
 
 func ProvideApp() (*App, func(), error) {
 	panic(wire.Build(
-		wire.NewSet(clock.NewUTCClock, wire.Bind(new(clock.Clock), new(clock.UTCClock))),
 		provideBotProvider,
 		initializeCustomHandlers,
 		provideHandlers,
 		provideHandlerManager,
-		gamesHandler,
 		NewApp,
 	))
 }
@@ -219,7 +218,9 @@ func provideHandlerManager(h []handlers.EventHandler) *handlers.Manager {
 
 func initializeCustomHandlers() customHandlerGenerator {
 	return func() []handlers.EventHandler {
-		return nil
+		gamesHandler, _ := provideGames()
+
+		return []handlers.EventHandler{gamesHandler}
 	}
 }
 
@@ -231,9 +232,8 @@ func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option
 	}
 }
 
-func provideGames(games.Handler, pubsub.Queue) *handlersgames.Games {
-	wire.Build(provideGameOptions, handlersgames.NewGames)
-	return &handlersgames.Games{}
+func provideGames() (*handlersgames.Games, error) {
+	panic(wire.Build(gamesDeps, provideGameOptions, handlersgames.NewGames))
 }
 
 func provideGameHandler(gc games.GameInfoClient, q pubsub.Queue, clk clock.Clock) games.Handler {
