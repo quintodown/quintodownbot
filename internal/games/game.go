@@ -182,6 +182,10 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 		}
 	}
 
+	if newGameInfo.Status.State == InProgressState && oldGameInfo.Status.State == ScheduledState {
+		lastGameChange = Started
+	}
+
 	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
 		lastGameChange = Finished
 	}
