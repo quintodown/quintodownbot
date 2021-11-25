@@ -19,7 +19,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const ticker = 10 * time.Millisecond
+const (
+	updateGame     = 10 * time.Millisecond
+	updateGameList = 10 * time.Millisecond
+)
 
 func TestGames_ExecuteHandlersFails(t *testing.T) {
 	q := new(mps.Queue)
@@ -30,9 +33,12 @@ func TestGames_ExecuteHandlersFails(t *testing.T) {
 	})).Once().
 		Return(nil)
 
+	gh := new(games.Handler)
+	gh.On("UpdateGamesList").Return(nil)
+
 	g := handlersgames.NewGames(
-		handlersgames.WithGameHandler(new(games.Handler)),
-		handlersgames.WithConfig(handlersgames.Config{UpdateGamesInformationTicker: ticker}),
+		handlersgames.WithGameHandler(gh),
+		handlersgames.WithConfig(getConfig()),
 		handlersgames.WithQueue(q),
 	)
 
@@ -49,11 +55,11 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Run(func(mock.Arguments) { called <- true })
 
 		g.ExecuteHandlers(ctx)
-		<-called
-		cancelFunc()
 
+		assertMocksCalled(called, cancelFunc)
 		gh.AssertExpectations(t)
 		q.AssertExpectations(t)
 		close(called)
@@ -70,11 +76,11 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 			sendMessageToChannel(t, c, b, true)
 			called <- true
 		})
+		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 
 		g.ExecuteHandlers(ctx)
-		<-called
-		cancelFunc()
 
+		assertMocksCalled(called, cancelFunc)
 		gh.AssertExpectations(t)
 		q.AssertExpectations(t)
 	})
@@ -95,11 +101,11 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 			return string(m.Payload) == "{\"error\":\"parse error: EOF reached while skipping array/object or token "+
 				"near offset 2 of ''\"}"
 		})).Once().Return(nil)
+		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 
 		g.ExecuteHandlers(ctx)
-		<-called
-		cancelFunc()
 
+		assertMocksCalled(called, cancelFunc)
 		gh.AssertExpectations(t)
 		q.AssertExpectations(t)
 		close(called)
@@ -125,6 +131,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 			called <- true
 		})
+		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 		q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
 			return string(message.Payload) == "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
 				"iniciado. Se juega en  (TestCity, TestState)\"}"
@@ -134,9 +141,8 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		})).Once().Return(nil)
 
 		g.ExecuteHandlers(ctx)
-		<-called
-		cancelFunc()
 
+		assertMocksCalled(called, cancelFunc)
 		gh.AssertExpectations(t)
 		q.AssertExpectations(t)
 		close(called)
@@ -187,14 +193,14 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 
 				called <- true
 			})
+			gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 			q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
 				return string(message.Payload) == td.payload
 			})).Once().Return(nil)
 
 			g.ExecuteHandlers(ctx)
-			<-called
-			cancelFunc()
 
+			assertMocksCalled(called, cancelFunc)
 			gh.AssertExpectations(t)
 			q.AssertExpectations(t)
 			close(called)
@@ -220,7 +226,7 @@ func initGameHandlerAndMocks(ctx context.Context) (
 
 	g := handlersgames.NewGames(
 		handlersgames.WithGameHandler(gh),
-		handlersgames.WithConfig(handlersgames.Config{UpdateGamesInformationTicker: ticker}),
+		handlersgames.WithConfig(getConfig()),
 		handlersgames.WithQueue(q),
 	)
 
@@ -240,4 +246,17 @@ func sendMessageToChannel(t *testing.T, channel chan *message.Message, eventMsg 
 
 		return true
 	}, time.Second, time.Millisecond)
+}
+
+func getConfig() handlersgames.Config {
+	return handlersgames.Config{
+		UpdateGamesInformationTicker: updateGame,
+		UpdateGamesListTicker:        updateGameList,
+	}
+}
+
+func assertMocksCalled(called <-chan interface{}, cancelFunc context.CancelFunc) {
+	<-called
+	<-called
+	cancelFunc()
 }

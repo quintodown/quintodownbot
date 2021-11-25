@@ -126,13 +126,13 @@ tasks:
       - install
     cmds:
       - go run github.com/mailru/easyjson/easyjson internal/pubsub/broadcast.go
-      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/espn.go
+      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/model.go
     sources:
       - internal/pubsub/broadcast.go
-      - internal/games/clients/espn/espn.go
+      - internal/games/clients/espn/model.go
     generates:
       - internal/pubsub/broadcast_easyjson.go
-      - internal/games/clients/espn/espn_easyjson.go
+      - internal/games/clients/espn/model_easyjson.go
   clean-json:
     desc: Remove all json generated files
     run: once
@@ -140,7 +140,7 @@ tasks:
       - find ./internal -type f -name '*_easyjson.go' -delete
     sources:
       - internal/pubsub/broadcast.go
-      - internal/games/clients/espn/espn.go
+      - internal/games/clients/espn/model.go
     silent: true
   mock:
     desc: Generate all mocks for testing
