@@ -39,7 +39,10 @@ import (
 
 type customHandlerGenerator func() []handlers.EventHandler
 
-const updateGamesInformationTicker = time.Minute
+const (
+	updateGamesInformationTicker = time.Minute
+	updateGamesListTicker        = 6 * time.Hour
+)
 
 var (
 	queueInstance *gochannel.GoChannel
@@ -227,7 +230,10 @@ func initializeCustomHandlers() customHandlerGenerator {
 func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {
 	return []handlersgames.Option{
 		handlersgames.WithGameHandler(gh),
-		handlersgames.WithConfig(handlersgames.Config{UpdateGamesInformationTicker: updateGamesInformationTicker}),
+		handlersgames.WithConfig(handlersgames.Config{
+			UpdateGamesInformationTicker: updateGamesInformationTicker,
+			UpdateGamesListTicker:        updateGamesListTicker,
+		}),
 		handlersgames.WithQueue(q),
 	}
 }

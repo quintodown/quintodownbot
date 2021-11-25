@@ -15,6 +15,8 @@ import (
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 
+const timeToCleanup = 4 * 24 * time.Hour
+
 type GameInfoClient interface {
 	GetGames(Competition) ([]Game, error)
 	GetGameInformation(Competition, string) (Game, error)
@@ -25,6 +27,7 @@ type Handler interface {
 	GetGamesStartingIn(c Competition, d time.Duration) []Game
 	GetGame(id string) (Game, error)
 	UpdateGamesInformation(onlyPlaying bool)
+	UpdateGamesList()
 }
 
 type GameHandler struct {
@@ -38,14 +41,14 @@ func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, cl
 	gh := &GameHandler{client: client, queue: queue, clk: clk}
 
 	if getGames {
-		go func() { gh.initGames() }()
+		go func() { gh.UpdateGamesList() }()
 	}
 
 	return gh
 }
 
 func (gh *GameHandler) GetGames(c Competition) []Game {
-	found := gh.loadGames(c)
+	found := gh.gamesList(c)
 
 	sort.Slice(found, func(i, j int) bool {
 		return found[i].Start.Before(found[j].Start)
@@ -59,7 +62,7 @@ func (gh *GameHandler) GetGamesStartingIn(c Competition, d time.Duration) []Game
 
 	offset := gh.clk.Now().Add(d).Truncate(time.Minute)
 
-	for _, v := range gh.loadGames(c) {
+	for _, v := range gh.gamesList(c) {
 		if offset.Equal(v.Start.UTC().Truncate(time.Minute)) {
 			found = append(found, v)
 		}
@@ -70,7 +73,7 @@ func (gh *GameHandler) GetGamesStartingIn(c Competition, d time.Duration) []Game
 
 func (gh *GameHandler) GetGame(id string) (Game, error) {
 	for _, competition := range GetCompetitions() {
-		for _, v := range gh.loadGames(competition) {
+		for _, v := range gh.gamesList(competition) {
 			if v.Id == id {
 				return v, nil
 			}
@@ -82,7 +85,7 @@ func (gh *GameHandler) GetGame(id string) (Game, error) {
 
 func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 	for _, competition := range GetCompetitions() {
-		gameList := gh.loadGames(competition)
+		gameList := gh.gamesList(competition)
 		for i, v := range gameList {
 			if onlyPlaying && !v.isGameInProgress(gh.clk) {
 				continue
@@ -127,18 +130,18 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 	}
 }
 
-func (gh *GameHandler) initGames() {
+func (gh *GameHandler) UpdateGamesList() {
 	for _, v := range GetCompetitions() {
 		games, err := gh.client.GetGames(v)
 		if err != nil {
 			continue
 		}
 
-		gh.gameList.Store(v.String(), games)
+		gh.gameList.Store(v.String(), gh.cleanUpGames(append(gh.gamesList(v), games...)))
 	}
 }
 
-func (gh *GameHandler) loadGames(c Competition) []Game {
+func (gh *GameHandler) gamesList(c Competition) []Game {
 	f, ok := gh.gameList.Load(c.String())
 	if !ok {
 		return nil
@@ -184,6 +187,19 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 	}
 
 	return lastGameChange
+}
+
+func (gh *GameHandler) cleanUpGames(gms []Game) []Game {
+	ngs := make([]Game, 0, len(gms))
+
+	now := gh.clk.Now()
+	for i := range gms {
+		if now.Sub(gms[i].Start) <= timeToCleanup {
+			ngs = append(ngs, gms[i])
+		}
+	}
+
+	return ngs
 }
 
 func (g *Game) toGameEvent(lastGameChange GameChange) []byte {

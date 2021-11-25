@@ -21,6 +21,7 @@ type Games struct {
 
 type Config struct {
 	UpdateGamesInformationTicker time.Duration
+	UpdateGamesListTicker        time.Duration
 }
 
 type Option func(g *Games)
@@ -55,6 +56,7 @@ func NewGames(options ...Option) *Games {
 
 func (g *Games) ExecuteHandlers(ctx context.Context) {
 	g.updateGamesInformation(ctx)
+	g.updateGameList(ctx)
 }
 
 func (g *Games) updateGamesInformation(ctx context.Context) {
@@ -77,6 +79,19 @@ func (g *Games) updateGamesInformation(ctx context.Context) {
 	}()
 
 	go g.sendGameUpdate(messages)
+}
+
+func (g Games) updateGameList(ctx context.Context) {
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.Tick(g.c.UpdateGamesListTicker):
+				g.gh.UpdateGamesList()
+			}
+		}
+	}()
 }
 
 func (g *Games) sendGameUpdate(messages <-chan *message.Message) {

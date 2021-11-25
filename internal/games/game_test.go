@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGameHandler_GetGames(t *testing.T) {
+func TestGameHandler_GetGamesEmptyList(t *testing.T) {
 	t.Run("it should return an empty list when games shouldn't be initialised", func(t *testing.T) {
 		gh := games.NewGameHandler(new(mgms.GameInfoClient), false, new(mps.Queue), new(clock.Clock))
 
@@ -42,9 +42,41 @@ func TestGameHandler_GetGames(t *testing.T) {
 		gic.AssertExpectations(t)
 	})
 
+	t.Run("it should an empty list when all games started more than 4 days ago", func(t *testing.T) {
+		gic := new(mgms.GameInfoClient)
+		mclk := new(clock.Clock)
+		initialised := make(chan interface{})
+		now := time.Now().UTC()
+
+		gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
+			defer close(initialised)
+
+			return []games.Game{
+				{
+					Id:          "qwert",
+					Start:       time.Now().UTC().Add(-5 * 24 * time.Hour),
+					Competition: games.NFL,
+				},
+			}
+		}, nil)
+		mclk.On("Now").Once().Return(now)
+
+		gh := games.NewGameHandler(gic, true, new(mps.Queue), mclk)
+
+		<-initialised
+		require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
+
+		require.Empty(t, gh.GetGames(games.NFL))
+		gic.AssertExpectations(t)
+	})
+}
+
+func TestGameHandler_GetGames(t *testing.T) {
 	t.Run("it should return a list of games sorted by start date after they have been initialised", func(t *testing.T) {
 		gic := new(mgms.GameInfoClient)
+		mclk := new(clock.Clock)
 		initialised := make(chan interface{})
+		now := time.Now().UTC()
 
 		gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
 			defer close(initialised)
@@ -52,16 +84,17 @@ func TestGameHandler_GetGames(t *testing.T) {
 			return []games.Game{
 				{
 					Id:    "asdfg",
-					Start: time.Now().UTC().Add(3 * time.Hour),
+					Start: now.Add(3 * time.Hour),
 				},
 				{
 					Id:    "gfdsa",
-					Start: time.Now().UTC().Add(2 * time.Hour),
+					Start: now.Add(2 * time.Hour),
 				},
 			}
 		}, nil)
+		mclk.On("Now").Once().Return(now)
 
-		gh := games.NewGameHandler(gic, true, new(mps.Queue), new(clock.Clock))
+		gh := games.NewGameHandler(gic, true, new(mps.Queue), mclk)
 
 		<-initialised
 		require.Eventually(t, func() bool { return len(gic.Calls) > 0 }, time.Second, time.Millisecond)
@@ -97,7 +130,7 @@ func TestGameHandler_GetGamesStartingIn(t *testing.T) {
 			},
 		}
 	}, nil)
-	mclk.On("Now").Once().Return(now)
+	mclk.On("Now").Times(2).Return(now)
 
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
@@ -116,11 +149,12 @@ func TestGameHandler_GetGame(t *testing.T) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
 	mclk := new(clock.Clock)
+	now := time.Now().UTC()
 
 	initialised := make(chan interface{})
 	g1 := games.Game{
 		Id:    "asdfg",
-		Start: time.Now().UTC().Add(5 * time.Hour),
+		Start: now.Add(5 * time.Hour),
 	}
 
 	gic.On("GetGames", games.NFL).Once().Return(func(games.Competition) []games.Game {
@@ -130,10 +164,11 @@ func TestGameHandler_GetGame(t *testing.T) {
 			g1,
 			{
 				Id:    "gfdsa",
-				Start: time.Now().UTC().Add(time.Hour),
+				Start: now.Add(time.Hour),
 			},
 		}
 	}, nil)
+	mclk.On("Now").Once().Return(now)
 
 	gh := games.NewGameHandler(gic, true, q, mclk)
 
