@@ -59,9 +59,7 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(called, cancelFunc)
-		gh.AssertExpectations(t)
-		q.AssertExpectations(t)
+		assertMocksCalled(t, called, cancelFunc, gh, q)
 		close(called)
 	})
 
@@ -80,9 +78,7 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(called, cancelFunc)
-		gh.AssertExpectations(t)
-		q.AssertExpectations(t)
+		assertMocksCalled(t, called, cancelFunc, gh, q)
 	})
 }
 
@@ -105,9 +101,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(called, cancelFunc)
-		gh.AssertExpectations(t)
-		q.AssertExpectations(t)
+		assertMocksCalled(t, called, cancelFunc, gh, q)
 		close(called)
 	})
 
@@ -119,6 +113,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			b, _ := easyjson.Marshal(pubsub.GameEvent{
+				Competition:    "NFL",
 				LastGameChange: games2.Started.String(),
 				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Record: "1-2"},
 				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Record: "2-1"},
@@ -133,7 +128,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		})
 		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 		q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
-			return string(message.Payload) == "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
+			return string(message.Payload) == "{\"text\":\"#NFL El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
 				"iniciado. Se juega en  (TestCity, TestState)\"}"
 		})).Once().Return(errors.New("error sending message to queue"))
 		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
@@ -142,9 +137,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(called, cancelFunc)
-		gh.AssertExpectations(t)
-		q.AssertExpectations(t)
+		assertMocksCalled(t, called, cancelFunc, gh, q)
 		close(called)
 	})
 }
@@ -156,6 +149,7 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 	}{
 		"it sends game message when game started": {
 			gameEvent: pubsub.GameEvent{
+				Competition:    "NFL",
 				LastGameChange: games2.Started.String(),
 				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Record: "1-2"},
 				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Record: "2-1"},
@@ -164,16 +158,17 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 					State: "TestState",
 				},
 			},
-			payload: "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
+			payload: "{\"text\":\"#NFL El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
 				"iniciado. Se juega en  (TestCity, TestState)\"}",
 		},
 		"it sends game message when game finished": {
 			gameEvent: pubsub.GameEvent{
+				Competition:    "NFL",
 				LastGameChange: games2.Finished.String(),
 				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Score: 1, Record: "1-2"},
 				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Score: 2, Record: "2-1"},
 			},
-			payload: "{\"text\":\"El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
+			payload: "{\"text\":\"#NFL El partido entre Away Team (2-1) vs Home Team (1-2) ha " +
 				"finalizado con el resultado de 2 - 1\"}",
 		},
 	}
@@ -200,9 +195,7 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 
 			g.ExecuteHandlers(ctx)
 
-			assertMocksCalled(called, cancelFunc)
-			gh.AssertExpectations(t)
-			q.AssertExpectations(t)
+			assertMocksCalled(t, called, cancelFunc, gh, q)
 			close(called)
 		})
 	}
@@ -255,8 +248,17 @@ func getConfig() handlersgames.Config {
 	}
 }
 
-func assertMocksCalled(called <-chan interface{}, cancelFunc context.CancelFunc) {
+func assertMocksCalled(
+	t *testing.T,
+	called <-chan interface{},
+	cancelFunc context.CancelFunc,
+	gh *games.Handler,
+	q *mps.Queue,
+) {
 	<-called
 	<-called
 	cancelFunc()
+
+	gh.AssertExpectations(t)
+	q.AssertExpectations(t)
 }

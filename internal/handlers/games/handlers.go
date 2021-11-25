@@ -133,7 +133,8 @@ func (g *Games) sendGameUpdate(messages <-chan *message.Message) {
 
 func (g *Games) getStartedGameMessage(m pubsub.GameEvent) string {
 	return fmt.Sprintf(
-		"El partido entre %s (%s) vs %s (%s) ha iniciado. Se juega en %s (%s, %s)",
+		"#%s El partido entre %s (%s) vs %s (%s) ha iniciado. Se juega en %s (%s, %s)",
+		m.Competition,
 		m.AwayTeam.Name,
 		m.AwayTeam.Record,
 		m.HomeTeam.Name,
@@ -146,7 +147,8 @@ func (g *Games) getStartedGameMessage(m pubsub.GameEvent) string {
 
 func (g *Games) getFinishedGameMessage(m pubsub.GameEvent) string {
 	return fmt.Sprintf(
-		"El partido entre %s (%s) vs %s (%s) ha finalizado con el resultado de %v - %v",
+		"#%s El partido entre %s (%s) vs %s (%s) ha finalizado con el resultado de %v - %v",
+		m.Competition,
 		m.AwayTeam.Name,
 		m.AwayTeam.Record,
 		m.HomeTeam.Name,
