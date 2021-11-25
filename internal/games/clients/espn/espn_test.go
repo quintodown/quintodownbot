@@ -116,6 +116,17 @@ func TestClient_GetGameInformation(t *testing.T) {
 		require.Empty(t, information)
 	})
 
+	t.Run("it should fail when wrong date format", func(t *testing.T) {
+		information, err := espnc.GetGameInformation(games.NFL, "4")
+
+		require.EqualError(
+			t,
+			err,
+			"parsing time \"08-19-2021 23:30\" as \"2006-01-02T15:04Z\": cannot parse \"9-2021 23:30\" as \"2006\"",
+		)
+		require.Empty(t, information)
+	})
+
 	t.Run("it should get updated game information", func(t *testing.T) {
 		information, err := espnc.GetGameInformation(games.NFL, "3")
 
@@ -128,6 +139,11 @@ func TestClient_GetGameInformation(t *testing.T) {
 }
 
 func registerMocksHTTP() {
+	registerScoreBoardMocks()
+	registerGameMocks()
+}
+
+func registerScoreBoardMocks() {
 	scoreboardResponder := func(req *http.Request) (*http.Response, error) {
 		sc, _ := os.ReadFile("testdata/scoreboard.json")
 
@@ -163,7 +179,9 @@ func registerMocksHTTP() {
 		"https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?lang=es&region=us",
 		httpmock.NewStringResponder(http.StatusNotFound, ""),
 	)
+}
 
+func registerGameMocks() {
 	httpmock.RegisterResponder(
 		http.MethodGet,
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=1&lang=es&region=us",
@@ -181,6 +199,16 @@ func registerMocksHTTP() {
 		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=3&lang=es&region=us",
 		func(req *http.Request) (*http.Response, error) {
 			sc, _ := os.ReadFile("testdata/game.json")
+
+			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
+		},
+	)
+
+	httpmock.RegisterResponder(
+		http.MethodGet,
+		"https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=4&lang=es&region=us",
+		func(req *http.Request) (*http.Response, error) {
+			sc, _ := os.ReadFile("testdata/game_wrong_date.json")
 
 			return httpmock.NewStringResponse(http.StatusOK, string(sc)), nil
 		},
