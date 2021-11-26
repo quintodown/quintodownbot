@@ -106,6 +106,7 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 			case AwayScore:
 				gameList[i].AwayTeam.Score = g.AwayTeam.Score
 			case Started:
+				gameList[i].Status.State = InProgressState
 				gameList[i].Status.Period = 1
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			case PeriodFinished:
@@ -113,6 +114,10 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			case Finished:
 				gameList[i].Status = g.Status
+				gameList[i].HomeTeam.Score = g.HomeTeam.Score
+				gameList[i].AwayTeam.Score = g.AwayTeam.Score
+				gameList[i].Status.Period = g.Status.Period
+				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			}
 
 			if lastGameChange != NoChanges {
