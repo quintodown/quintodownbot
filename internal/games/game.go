@@ -171,28 +171,26 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 		lastGameChange = Rescheduled
 	}
 
-	if newGameInfo.HomeTeam.Score != oldGameInfo.HomeTeam.Score {
+	if lastGameChange == NoChanges && newGameInfo.HomeTeam.Score != oldGameInfo.HomeTeam.Score {
 		lastGameChange = HomeScore
 	}
 
-	if newGameInfo.AwayTeam.Score != oldGameInfo.AwayTeam.Score {
+	if lastGameChange == NoChanges && newGameInfo.AwayTeam.Score != oldGameInfo.AwayTeam.Score {
 		lastGameChange = AwayScore
 	}
 
-	if newGameInfo.Status.Period != oldGameInfo.Status.Period && newGameInfo.Status.State == InProgressState {
+	if lastGameChange == NoChanges &&
+		newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
+		lastGameChange = Finished
+	}
+
+	if lastGameChange == NoChanges &&
+		(newGameInfo.Status.State != oldGameInfo.Status.State || newGameInfo.Status.Period != oldGameInfo.Status.Period) {
 		if newGameInfo.Status.Period == 1 {
 			lastGameChange = Started
 		} else {
 			lastGameChange = PeriodFinished
 		}
-	}
-
-	if newGameInfo.Status.State == InProgressState && oldGameInfo.Status.State == ScheduledState {
-		lastGameChange = Started
-	}
-
-	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
-		lastGameChange = Finished
 	}
 
 	return lastGameChange
