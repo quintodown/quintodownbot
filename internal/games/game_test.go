@@ -192,62 +192,126 @@ func TestGameHandler_GetGame(t *testing.T) {
 	})
 }
 
-func TestGameHandler_UpdateGamesInformation(t *testing.T) {
+func TestGameHandler_UpdateGamesInformationNoUpdates(t *testing.T) {
 	startPlaying := time.Now().UTC().Add(-1 * time.Hour)
 
 	t.Run("it should not send any update when fails getting game update", func(t *testing.T) {
-		gic, _, gh := initGameHandler(t, startPlaying, games.Game{}, errors.New("testing"), "")
+		gic, _, gh := initGameHandler(
+			t,
+			startPlaying,
+			games.Game{},
+			errors.New("testing"),
+			"",
+			games.InProgressState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, nil)
 	})
 
 	t.Run("it should not send any update when there isn't any update", func(t *testing.T) {
-		gic, _, gh := initGameHandler(t, startPlaying, gameInProgress(startPlaying), nil, "")
+		gic, _, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameScheduled(startPlaying),
+			nil,
+			"",
+			games.ScheduledState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, nil)
 	})
+}
+
+func TestGameHandler_UpdateGamesInformation(t *testing.T) {
+	startPlaying := time.Now().UTC().Add(-1 * time.Hour)
 
 	t.Run("it should send game information when game has been rescheduled", func(t *testing.T) {
 		newTime := time.Now().UTC().Add(4 * time.Hour)
 
-		gic, q, gh := initGameHandler(t, startPlaying, gameRescheduled(newTime), nil, rescheduledPayload(newTime))
-
-		gh.UpdateGamesInformation(true)
-		mockAssertion(t, gic, q)
-	})
-
-	t.Run("it should send game information when home team scores", func(t *testing.T) {
-		gic, q, gh := initGameHandler(t, startPlaying, gameHomeScore(startPlaying), nil, homeScorePayload(startPlaying))
-
-		gh.UpdateGamesInformation(true)
-		mockAssertion(t, gic, q)
-	})
-
-	t.Run("it should send game information when away team scores", func(t *testing.T) {
-		gic, q, gh := initGameHandler(t, startPlaying, gameAwayScore(startPlaying), nil, awayScorePayload(startPlaying))
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameRescheduled(newTime),
+			nil,
+			rescheduledPayload(newTime),
+			games.ScheduledState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, q)
 	})
 
 	t.Run("it should send game information when game has started", func(t *testing.T) {
-		gic, q, gh := initGameHandler(t, startPlaying, gameStarted(startPlaying), nil, getStartedPayload(startPlaying))
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameStarted(startPlaying),
+			nil,
+			getStartedPayload(startPlaying),
+			games.ScheduledState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, q)
 	})
 
 	t.Run("it should send game information when period has finished", func(t *testing.T) {
-		gic, q, gh := initGameHandler(t, startPlaying, gameEndPeriod(startPlaying), nil, endPeriodPayload(startPlaying))
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameEndPeriod(startPlaying),
+			nil,
+			endPeriodPayload(startPlaying),
+			games.InProgressState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, q)
 	})
 
 	t.Run("it should send game information when game has finished", func(t *testing.T) {
-		gic, q, gh := initGameHandler(t, startPlaying, gameFinished(startPlaying), nil, gameFinishedPayload(startPlaying))
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameFinished(startPlaying),
+			nil,
+			gameFinishedPayload(startPlaying),
+			games.InProgressState,
+		)
+
+		gh.UpdateGamesInformation(true)
+		mockAssertion(t, gic, q)
+	})
+}
+
+func TestGameHandler_UpdateGamesInformationScores(t *testing.T) {
+	startPlaying := time.Now().UTC().Add(-1 * time.Hour)
+
+	t.Run("it should send game information when home team scores", func(t *testing.T) {
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameHomeScore(startPlaying),
+			nil,
+			homeScorePayload(startPlaying),
+			games.InProgressState,
+		)
+
+		gh.UpdateGamesInformation(true)
+		mockAssertion(t, gic, q)
+	})
+
+	t.Run("it should send game information when away team scores", func(t *testing.T) {
+		gic, q, gh := initGameHandler(
+			t,
+			startPlaying,
+			gameAwayScore(startPlaying),
+			nil,
+			awayScorePayload(startPlaying),
+			games.InProgressState,
+		)
 
 		gh.UpdateGamesInformation(true)
 		mockAssertion(t, gic, q)
@@ -262,11 +326,14 @@ func mockAssertion(t *testing.T, gic *mgms.GameInfoClient, q *mps.Queue) {
 	}
 }
 
-func initGameHandler(t *testing.T, startPlaying time.Time, g games.Game, e error, payload string) (
-	*mgms.GameInfoClient,
-	*mps.Queue,
-	games.Handler,
-) {
+func initGameHandler(
+	t *testing.T,
+	startPlaying time.Time,
+	g games.Game,
+	e error,
+	payload string,
+	state games.GameState,
+) (*mgms.GameInfoClient, *mps.Queue, games.Handler) {
 	gic := new(mgms.GameInfoClient)
 	q := new(mps.Queue)
 	mclk := new(clock.Clock)
@@ -280,7 +347,7 @@ func initGameHandler(t *testing.T, startPlaying time.Time, g games.Game, e error
 			{
 				Id:          "asdfg",
 				Start:       startPlaying,
-				Status:      games.GameStatus{State: games.InProgressState},
+				Status:      games.GameStatus{State: state, Period: 1},
 				Competition: games.NFL,
 			},
 			{
@@ -318,7 +385,7 @@ func rescheduledPayload(newTime time.Time) string {
 		"\"start\":\"" + newTime.Format(time.RFC3339Nano) + "\"," +
 		"\"name\":\"\",\"venue\":{\"fullName\":\"\",\"city\":\"\"," +
 		"\"state\":\"\",\"capacity\":0,\"indoor\":false}," +
-		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0," +
+		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":1," +
 		"\"state\":\"RescheduledState\"},\"weather\":{\"displayValue\":\"\"," +
 		"\"temperature\":0},\"homeTeam\":{\"score\":0,\"name\":\"\"," +
 		"\"shortDisplayName\":\"\",\"logo\":\"\",\"record\":\"\"}," +
@@ -380,7 +447,7 @@ func awayScorePayload(startPlaying time.Time) string {
 		"\"start\":\"" + startPlaying.Format(time.RFC3339Nano) + "\",\"name\":\"\"," +
 		"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\"," +
 		"\"capacity\":0,\"indoor\":false}," +
-		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0," +
+		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":1," +
 		"\"state\":\"InProgressState\"}," +
 		"\"weather\":{\"displayValue\":\"\",\"temperature\":0}," +
 		"\"homeTeam\":{\"score\":0,\"name\":\"\"," +
@@ -396,7 +463,7 @@ func homeScorePayload(startPlaying time.Time) string {
 		"\"start\":\"" + startPlaying.Format(time.RFC3339Nano) + "\",\"name\":\"\"," +
 		"\"venue\":{\"fullName\":\"\",\"city\":\"\",\"state\":\"\"," +
 		"\"capacity\":0,\"indoor\":false}," +
-		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":0," +
+		"\"status\":{\"clock\":0,\"displayClock\":\"\",\"period\":1," +
 		"\"state\":\"InProgressState\"}," +
 		"\"weather\":{\"displayValue\":\"\",\"temperature\":0}," +
 		"\"homeTeam\":{\"score\":7,\"name\":\"\"," +
@@ -409,9 +476,10 @@ func homeScorePayload(startPlaying time.Time) string {
 
 func gameFinished(startPlaying time.Time) games.Game {
 	return games.Game{
-		Id:     "asdfg",
-		Start:  startPlaying,
-		Status: games.GameStatus{State: games.FinishedState},
+		Id:       "asdfg",
+		Start:    startPlaying,
+		Status:   games.GameStatus{State: games.FinishedState},
+		HomeTeam: games.TeamScore{},
 	}
 }
 
@@ -449,6 +517,7 @@ func gameHomeScore(startPlaying time.Time) games.Game {
 	return games.Game{
 		Id:       "asdfg",
 		Start:    startPlaying,
+		Status:   games.GameStatus{Period: 1, State: games.InProgressState},
 		HomeTeam: games.TeamScore{Score: 7},
 	}
 }
@@ -460,11 +529,11 @@ func gameRescheduled(newTime time.Time) games.Game {
 	}
 }
 
-func gameInProgress(startPlaying time.Time) games.Game {
+func gameScheduled(startPlaying time.Time) games.Game {
 	return games.Game{
 		Id:          "asdfg",
 		Start:       startPlaying,
-		Status:      games.GameStatus{State: games.InProgressState},
+		Status:      games.GameStatus{State: games.ScheduledState, Period: 1},
 		Competition: games.NFL,
 	}
 }

@@ -106,6 +106,7 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 			case AwayScore:
 				gameList[i].AwayTeam.Score = g.AwayTeam.Score
 			case Started:
+				gameList[i].Status.State = InProgressState
 				gameList[i].Status.Period = 1
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			case PeriodFinished:
@@ -113,6 +114,10 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			case Finished:
 				gameList[i].Status = g.Status
+				gameList[i].HomeTeam.Score = g.HomeTeam.Score
+				gameList[i].AwayTeam.Score = g.AwayTeam.Score
+				gameList[i].Status.Period = g.Status.Period
+				gameList[i].Status.DisplayClock = g.Status.DisplayClock
 			}
 
 			if lastGameChange != NoChanges {
@@ -166,28 +171,26 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 		lastGameChange = Rescheduled
 	}
 
-	if newGameInfo.HomeTeam.Score != oldGameInfo.HomeTeam.Score {
+	if lastGameChange == NoChanges && newGameInfo.HomeTeam.Score != oldGameInfo.HomeTeam.Score {
 		lastGameChange = HomeScore
 	}
 
-	if newGameInfo.AwayTeam.Score != oldGameInfo.AwayTeam.Score {
+	if lastGameChange == NoChanges && newGameInfo.AwayTeam.Score != oldGameInfo.AwayTeam.Score {
 		lastGameChange = AwayScore
 	}
 
-	if newGameInfo.Status.Period != oldGameInfo.Status.Period && newGameInfo.Status.State == InProgressState {
+	if lastGameChange == NoChanges &&
+		newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
+		lastGameChange = Finished
+	}
+
+	if lastGameChange == NoChanges &&
+		(newGameInfo.Status.State != oldGameInfo.Status.State || newGameInfo.Status.Period != oldGameInfo.Status.Period) {
 		if newGameInfo.Status.Period == 1 {
 			lastGameChange = Started
 		} else {
 			lastGameChange = PeriodFinished
 		}
-	}
-
-	if newGameInfo.Status.State == InProgressState && oldGameInfo.Status.State == ScheduledState {
-		lastGameChange = Started
-	}
-
-	if newGameInfo.Status.State == FinishedState && oldGameInfo.Status.State != FinishedState {
-		lastGameChange = Finished
 	}
 
 	return lastGameChange
