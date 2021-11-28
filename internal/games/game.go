@@ -48,7 +48,12 @@ func NewGameHandler(client GameInfoClient, getGames bool, queue pubsub.Queue, cl
 }
 
 func (gh *GameHandler) GetGames(c Competition) []Game {
-	found := gh.gamesList(c)
+	list := gh.gamesList(c)
+	found := make([]Game, 0, len(list))
+
+	for k := range list {
+		found = append(found, list[k])
+	}
 
 	sort.Slice(found, func(i, j int) bool {
 		return found[i].Start.Before(found[j].Start)
@@ -86,7 +91,7 @@ func (gh *GameHandler) GetGame(id string) (Game, error) {
 func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 	for _, competition := range GetCompetitions() {
 		gameList := gh.gamesList(competition)
-		for i, v := range gameList {
+		for k, v := range gameList {
 			if onlyPlaying && !v.isGameInProgress(gh.clk) {
 				continue
 			}
@@ -99,33 +104,34 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 			lastGameChange := gh.getLastGameChange(v, g)
 			switch lastGameChange {
 			case Rescheduled:
-				gameList[i].Start = g.Start
-				gameList[i].Status.State = RescheduledState
+				v.Start = g.Start
+				v.Status.State = RescheduledState
 			case HomeScore:
-				gameList[i].HomeTeam.Score = g.HomeTeam.Score
+				v.HomeTeam.Score = g.HomeTeam.Score
 			case AwayScore:
-				gameList[i].AwayTeam.Score = g.AwayTeam.Score
+				v.AwayTeam.Score = g.AwayTeam.Score
 			case Started:
-				gameList[i].Status.State = InProgressState
-				gameList[i].Status.Period = 1
-				gameList[i].Status.DisplayClock = g.Status.DisplayClock
+				v.Status.State = InProgressState
+				v.Status.Period = 1
+				v.Status.DisplayClock = g.Status.DisplayClock
 			case PeriodFinished:
-				gameList[i].Status.Period = g.Status.Period
-				gameList[i].Status.DisplayClock = g.Status.DisplayClock
+				v.Status.Period = g.Status.Period
+				v.Status.DisplayClock = g.Status.DisplayClock
 			case Finished:
-				gameList[i].Status = g.Status
-				gameList[i].HomeTeam.Score = g.HomeTeam.Score
-				gameList[i].AwayTeam.Score = g.AwayTeam.Score
-				gameList[i].Status.Period = g.Status.Period
-				gameList[i].Status.DisplayClock = g.Status.DisplayClock
+				v.Status = g.Status
+				v.HomeTeam.Score = g.HomeTeam.Score
+				v.AwayTeam.Score = g.AwayTeam.Score
+				v.Status.Period = g.Status.Period
+				v.Status.DisplayClock = g.Status.DisplayClock
 			}
 
 			if lastGameChange != NoChanges {
+				gameList[k] = v
 				_ = gh.queue.Publish(
 					pubsub.GamesTopic.String(),
 					message.NewMessage(
 						watermill.NewUUID(),
-						gameList[i].toGameEvent(lastGameChange),
+						v.toGameEvent(lastGameChange),
 					),
 				)
 			}
@@ -137,22 +143,30 @@ func (gh *GameHandler) UpdateGamesInformation(onlyPlaying bool) {
 
 func (gh *GameHandler) UpdateGamesList() {
 	for _, v := range GetCompetitions() {
+		list := gh.gamesList(v)
+
 		games, err := gh.client.GetGames(v)
 		if err != nil {
 			continue
 		}
 
-		gh.gameList.Store(v.String(), gh.cleanUpGames(append(gh.gamesList(v), games...)))
+		for i := range games {
+			if _, ok := list[games[i].key()]; !ok {
+				list[games[i].key()] = games[i]
+			}
+		}
+
+		gh.gameList.Store(v.String(), gh.cleanUpGames(list))
 	}
 }
 
-func (gh *GameHandler) gamesList(c Competition) []Game {
+func (gh *GameHandler) gamesList(c Competition) map[string]Game {
 	f, ok := gh.gameList.Load(c.String())
 	if !ok {
-		return nil
+		return map[string]Game{}
 	}
 
-	games, ok := f.([]Game)
+	games, ok := f.(map[string]Game)
 	if !ok {
 		return nil
 	}
@@ -196,17 +210,15 @@ func (gh *GameHandler) getLastGameChange(oldGameInfo, newGameInfo Game) GameChan
 	return lastGameChange
 }
 
-func (gh *GameHandler) cleanUpGames(gms []Game) []Game {
-	ngs := make([]Game, 0, len(gms))
-
+func (gh *GameHandler) cleanUpGames(gms map[string]Game) map[string]Game {
 	now := gh.clk.Now()
-	for i := range gms {
-		if now.Sub(gms[i].Start) <= timeToCleanup {
-			ngs = append(ngs, gms[i])
+	for k := range gms {
+		if now.Sub(gms[k].Start) > timeToCleanup {
+			delete(gms, k)
 		}
 	}
 
-	return ngs
+	return gms
 }
 
 func (g *Game) toGameEvent(lastGameChange GameChange) []byte {

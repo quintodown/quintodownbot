@@ -99,3 +99,7 @@ func (g *Game) isGameInProgress(clk clock.Clock) bool {
 func (g *Game) hasFinishedGame() bool {
 	return g.Status.State == FinishedState
 }
+
+func (g *Game) key() string {
+	return g.Id + g.Start.GoString() + g.AwayTeam.ShortDisplayName + g.HomeTeam.ShortDisplayName
+}
