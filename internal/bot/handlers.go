@@ -2,14 +2,16 @@ package bot
 
 import (
 	"bytes"
+	"strconv"
+	"strings"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
-	"strings"
 
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
+
 func (b *Bot) handleStartCommand(m *TelegramMessage) {
 	_ = b.bot.Send(m.SenderID, "Thanks for using the bot! You can type /help command to know what can I do")
 }

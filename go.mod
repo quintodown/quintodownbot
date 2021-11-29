@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/golangci/golangci-lint v1.43.0
+	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/javiyt/go-twitter v0.0.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.7.0

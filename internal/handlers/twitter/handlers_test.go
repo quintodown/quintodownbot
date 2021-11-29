@@ -28,18 +28,6 @@ func (c channelError) Error() string {
 	return "error getting channel error"
 }
 
-type messageNotSendError struct{}
-
-func (m messageNotSendError) Error() string {
-	return "couldn't send message to twitter"
-}
-
-type channelError struct{}
-
-func (c channelError) Error() string {
-	return "error getting channel error"
-}
-
 func TestTwitter_ID(t *testing.T) {
 	mockedTwitter := new(mb.TwitterClient)
 	mockedQueue := new(mq.Queue)
