@@ -7,14 +7,26 @@ import (
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	ht "github.com/javiyt/tweetgram/internal/handlers/twitter"
-	"github.com/javiyt/tweetgram/internal/pubsub"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
 	"github.com/mailru/easyjson"
+	ht "github.com/quintodown/quintodownbot/internal/handlers/twitter"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+type messageNotSendError struct{}
+
+func (m messageNotSendError) Error() string {
+	return "couldn't send message to twitter"
+}
+
+type channelError struct{}
+
+func (c channelError) Error() string {
+	return "error getting channel error"
+}
 
 type messageNotSendError struct{}
 
