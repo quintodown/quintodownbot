@@ -101,5 +101,5 @@ func (g *Game) hasFinishedGame() bool {
 }
 
 func (g *Game) key() string {
-	return g.Id + g.Start.GoString() + g.AwayTeam.ShortDisplayName + g.HomeTeam.ShortDisplayName
+	return g.Id + g.Competition.String() + g.AwayTeam.ShortDisplayName + g.HomeTeam.ShortDisplayName
 }
