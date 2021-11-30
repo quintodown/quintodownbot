@@ -81,7 +81,7 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		defer close(called)
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			b, _ := easyjson.Marshal(pubsub.GameEvent{LastGameChange: games2.HomeScore.String()})
-			sendMessageToChannel(t, c, b, true)
+			sendMessageToChannel(t, c, b)
 			called <- true
 		})
 		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
@@ -108,7 +108,7 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 					State: "TestState",
 				},
 			})
-			sendMessageToChannel(t, c, b, true)
+			sendMessageToChannel(t, c, b)
 			called <- true
 		})
 		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
@@ -128,7 +128,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
-			sendMessageToChannel(t, c, []byte("{["), true)
+			sendMessageToChannel(t, c, []byte("{["))
 			called <- true
 		})
 		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
@@ -160,7 +160,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 					State: "TestState",
 				},
 			})
-			sendMessageToChannel(t, c, b, false)
+			sendMessageToChannel(t, c, b)
 
 			called <- true
 		})
@@ -222,7 +222,7 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 
 			gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 				b, _ := easyjson.Marshal(td.gameEvent)
-				sendMessageToChannel(t, c, b, true)
+				sendMessageToChannel(t, c, b)
 
 				called <- true
 			})
@@ -264,16 +264,12 @@ func initGameHandlerAndMocks(ctx context.Context) (
 	return g, gamesChannel, q, gh
 }
 
-func sendMessageToChannel(t *testing.T, channel chan *message.Message, eventMsg []byte, acked bool) {
+func sendMessageToChannel(t *testing.T, channel chan *message.Message, eventMsg []byte) {
 	newMessage := message.NewMessage(watermill.NewUUID(), eventMsg)
 	channel <- newMessage
 
 	require.Eventually(t, func() bool {
-		if acked {
-			<-newMessage.Acked()
-		} else {
-			<-newMessage.Nacked()
-		}
+		<-newMessage.Acked()
 
 		return true
 	}, time.Second, time.Millisecond)
