@@ -24,6 +24,16 @@ const (
 	updateGameList = 10 * time.Millisecond
 )
 
+func TestGames_ID(t *testing.T) {
+	g := handlersgames.NewGames(
+		handlersgames.WithGameHandler(new(games.Handler)),
+		handlersgames.WithConfig(getConfig()),
+		handlersgames.WithQueue(new(mps.Queue)),
+	)
+
+	require.Equal(t, "games", g.ID())
+}
+
 func TestGames_ExecuteHandlersFails(t *testing.T) {
 	q := new(mps.Queue)
 	q.On("Subscribe", context.Background(), pubsub.GamesTopic.String()).Once().
@@ -76,6 +86,34 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		})
 		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
 
+		g.ExecuteHandlers(ctx)
+
+		assertMocksCalled(t, called, cancelFunc, gh, q)
+	})
+
+	t.Run("it does nothing when notifications stopped", func(t *testing.T) {
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		g, c, q, gh := initGameHandlerAndMocks(ctx)
+
+		called := make(chan interface{})
+		defer close(called)
+		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
+			b, _ := easyjson.Marshal(pubsub.GameEvent{
+				Competition:    "NFL",
+				LastGameChange: games2.Started.String(),
+				HomeTeam:       pubsub.TeamScore{Name: "Home Team", Record: "1-2"},
+				AwayTeam:       pubsub.TeamScore{Name: "Away Team", Record: "2-1"},
+				Venue: pubsub.GameVenue{
+					City:  "TestCity",
+					State: "TestState",
+				},
+			})
+			sendMessageToChannel(t, c, b, true)
+			called <- true
+		})
+		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+
+		g.StopNotifications()
 		g.ExecuteHandlers(ctx)
 
 		assertMocksCalled(t, called, cancelFunc, gh, q)
