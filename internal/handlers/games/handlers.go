@@ -14,9 +14,10 @@ import (
 )
 
 type Games struct {
-	gh games.Handler
-	c  Config
-	q  pubsub.Queue
+	gh           games.Handler
+	c            Config
+	q            pubsub.Queue
+	shouldNotify bool
 }
 
 type Config struct {
@@ -45,13 +46,21 @@ func WithQueue(q pubsub.Queue) Option {
 }
 
 func NewGames(options ...Option) *Games {
-	g := &Games{}
+	g := &Games{shouldNotify: true}
 
 	for _, o := range options {
 		o(g)
 	}
 
 	return g
+}
+
+func (g *Games) ID() string {
+	return "games"
+}
+
+func (g *Games) StopNotifications() {
+	g.shouldNotify = false
 }
 
 func (g *Games) ExecuteHandlers(ctx context.Context) {
@@ -96,6 +105,12 @@ func (g Games) updateGameList(ctx context.Context) {
 
 func (g *Games) sendGameUpdate(messages <-chan *message.Message) {
 	for msg := range messages {
+		if !g.shouldNotify {
+			msg.Ack()
+
+			continue
+		}
+
 		var m pubsub.GameEvent
 
 		if err := easyjson.Unmarshal(msg.Payload, &m); err != nil {
