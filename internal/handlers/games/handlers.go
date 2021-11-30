@@ -137,9 +137,6 @@ func (g *Games) sendGameUpdate(messages <-chan *message.Message) {
 
 		if err := g.q.Publish(pubsub.TextTopic.String(), message.NewMessage(watermill.NewUUID(), mb)); err != nil {
 			handlers.SendError(g.q, err)
-			msg.Nack()
-
-			continue
 		}
 
 		msg.Ack()
