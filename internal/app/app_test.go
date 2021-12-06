@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	pbsb "github.com/quintodown/quintodownbot/internal/pubsub"
+
 	"github.com/quintodown/quintodownbot/mocks/pubsub"
 
 	"github.com/ThreeDotsLabs/watermill/message"
@@ -17,18 +18,6 @@ import (
 
 	mockBot "github.com/quintodown/quintodownbot/mocks/bot"
 )
-
-type startAppError struct{}
-
-func (m startAppError) Error() string {
-	return "could not start"
-}
-
-type botInstanceError struct{}
-
-func (m botInstanceError) Error() string {
-	return "bot instance not ready"
-}
 
 type startAppError struct{}
 
@@ -109,7 +98,7 @@ func TestStart(t *testing.T) {
 			return mb, nil
 		}
 		mb.On("Start", context.Background()).Once().Return(nil)
-		q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+		q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 			Return(func(context.Context, string) <-chan *message.Message {
 				return make(chan *message.Message)
 			}, nil)
@@ -131,7 +120,7 @@ func TestRun(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Run").Once()
-	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)
@@ -152,7 +141,7 @@ func TestStop(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Stop").Once()
-	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)

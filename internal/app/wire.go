@@ -227,35 +227,6 @@ func initializeCustomHandlers() customHandlerGenerator {
 	}
 }
 
-func provideHandlers(customHandlers customHandlerGenerator) ([]handlers.EventHandler, func(), error) {
-	telegramHandler, err := provideTelegramHandler()
-	if err != nil {
-		return nil, nil, err
-	}
-	twitterHandler, err := provideTwitterHandler()
-	if err != nil {
-		return nil, nil, err
-	}
-	errorHandler, cleanup, err := provideErrorHandler()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return append(customHandlers(),
-		telegramHandler,
-		twitterHandler,
-		errorHandler,
-	), cleanup, nil
-}
-
-func provideHandlerManager(q pubsub.Queue, h []handlers.EventHandler) *handlers.Manager {
-	return handlers.NewHandlersManager(q, h...)
-}
-
-func initializeCustomHandlers() customHandlerGenerator {
-	return func() []handlers.EventHandler {
-		return nil
-	}
 func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {
 	return []handlersgames.Option{
 		handlersgames.WithGameHandler(gh),
