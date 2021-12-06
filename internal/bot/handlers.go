@@ -8,7 +8,6 @@ import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/mailru/easyjson"
-
 	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	pbsb "github.com/quintodown/quintodownbot/internal/pubsub"
+
 	"github.com/quintodown/quintodownbot/mocks/pubsub"
 
 	"github.com/ThreeDotsLabs/watermill/message"
