@@ -5,17 +5,30 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ThreeDotsLabs/watermill/message"
-	pubsub2 "github.com/javiyt/tweetgram/internal/pubsub"
-	"github.com/javiyt/tweetgram/mocks/pubsub"
+	pbsb "github.com/quintodown/quintodownbot/internal/pubsub"
+	"github.com/quintodown/quintodownbot/mocks/pubsub"
 
-	"github.com/javiyt/tweetgram/internal/app"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/handlers"
+	"github.com/ThreeDotsLabs/watermill/message"
+
+	"github.com/quintodown/quintodownbot/internal/app"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/stretchr/testify/require"
 
-	mockBot "github.com/javiyt/tweetgram/mocks/bot"
+	mockBot "github.com/quintodown/quintodownbot/mocks/bot"
 )
+
+type startAppError struct{}
+
+func (m startAppError) Error() string {
+	return "could not start"
+}
+
+type botInstanceError struct{}
+
+func (m botInstanceError) Error() string {
+	return "bot instance not ready"
+}
 
 type startAppError struct{}
 

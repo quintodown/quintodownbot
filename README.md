@@ -1,7 +1,7 @@
-# Tweetgram
+# Quintodownbot
 
-[![codecov](https://codecov.io/gh/javiyt/tweetgram/branch/main/graph/badge.svg?token=Q15YVM2SMC)](https://codecov.io/gh/javiyt/tweetgram)
-[![Test](https://github.com/javiyt/tweetgram/actions/workflows/ci.yml/badge.svg)](https://github.com/javiyt/tweetgram/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/quintodown/quintodownbot/branch/main/graph/badge.svg?token=Q15YVM2SMC)](https://codecov.io/gh/javiyt/tweetgram)
+[![Test](https://github.com/quintodown/quintodownbot/actions/workflows/ci.yml/badge.svg)](https://github.com/javiyt/tweetgram/actions/workflows/ci.yml)
 
 Telegram bot to publish post to twitter
 
@@ -17,7 +17,7 @@ task setup
 And you are done, it will generate the env files needed to run the bot and will download all dependencies, also run all
 code generation tools.
 
-###  Configuring the bot
+### Configuring the bot
 
 You can find a file inside cmd folder called env where you can adjust the variables, take into account the generated one
 are random values. The content of the env file will look like following:
