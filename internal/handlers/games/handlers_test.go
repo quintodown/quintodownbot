@@ -20,8 +20,9 @@ import (
 )
 
 const (
-	updateGame     = 10 * time.Millisecond
-	updateGameList = 10 * time.Millisecond
+	updateGame      = 10 * time.Millisecond
+	updateGameList  = 10 * time.Millisecond
+	bufferEventTime = 5 * time.Millisecond
 )
 
 func TestGames_ID(t *testing.T) {
@@ -65,11 +66,11 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) { called <- true })
-		gh.On("UpdateGamesList").Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Maybe()
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q)
+		assertMocksCalled(t, called, cancelFunc, gh, q, false)
 		close(called)
 	})
 
@@ -81,14 +82,14 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		defer close(called)
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			b, _ := easyjson.Marshal(pubsub.GameEvent{LastGameChange: games2.HomeScore.String()})
-			sendMessageToChannel(t, c, b)
+			sendMessageToChannel(t, c, b, true)
 			called <- true
 		})
-		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Maybe()
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q)
+		assertMocksCalled(t, called, cancelFunc, gh, q, false)
 	})
 
 	t.Run("it does nothing when notifications stopped", func(t *testing.T) {
@@ -108,15 +109,15 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 					State: "TestState",
 				},
 			})
-			sendMessageToChannel(t, c, b)
+			sendMessageToChannel(t, c, b, false)
 			called <- true
 		})
-		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Maybe()
 
 		g.StopNotifications()
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q)
+		assertMocksCalled(t, called, cancelFunc, gh, q, false)
 	})
 }
 
@@ -128,18 +129,18 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		called := make(chan interface{})
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
-			sendMessageToChannel(t, c, []byte("{["))
+			sendMessageToChannel(t, c, []byte("{["), true)
 			called <- true
 		})
 		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
 			return string(m.Payload) == "{\"error\":\"parse error: EOF reached while skipping array/object or token "+
 				"near offset 2 of ''\"}"
 		})).Once().Return(nil)
-		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Maybe()
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q)
+		assertMocksCalled(t, called, cancelFunc, gh, q, false)
 		close(called)
 	})
 
@@ -160,22 +161,22 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 					State: "TestState",
 				},
 			})
-			sendMessageToChannel(t, c, b)
+			sendMessageToChannel(t, c, b, true)
 
 			called <- true
 		})
-		gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+		gh.On("UpdateGamesList").Maybe()
 		q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
 			return string(message.Payload) == "{\"text\":\"#NFL El partido entre Away Team (2-1) vs Home Team (1-2) ha "+
 				"iniciado. Se juega en  (TestCity, TestState)\"}"
 		})).Once().Return(errors.New("error sending message to queue"))
 		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
 			return string(message.Payload) == "{\"error\":\"error sending message to queue\"}"
-		})).Once().Return(nil)
+		})).Run(func(mock.Arguments) { called <- true }).Once().Return(nil)
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q)
+		assertMocksCalled(t, called, cancelFunc, gh, q, true)
 		close(called)
 	})
 }
@@ -222,18 +223,18 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 
 			gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 				b, _ := easyjson.Marshal(td.gameEvent)
-				sendMessageToChannel(t, c, b)
+				sendMessageToChannel(t, c, b, true)
 
 				called <- true
 			})
-			gh.On("UpdateGamesList").Once().Run(func(mock.Arguments) { called <- true })
+			gh.On("UpdateGamesList").Maybe()
 			q.On("Publish", pubsub.TextTopic.String(), mock.MatchedBy(func(message *message.Message) bool {
 				return string(message.Payload) == td.payload
-			})).Once().Return(nil)
+			})).Run(func(mock.Arguments) { called <- true }).Once().Return(nil)
 
 			g.ExecuteHandlers(ctx)
 
-			assertMocksCalled(t, called, cancelFunc, gh, q)
+			assertMocksCalled(t, called, cancelFunc, gh, q, true)
 			close(called)
 		})
 	}
@@ -248,7 +249,7 @@ func initGameHandlerAndMocks(ctx context.Context) (
 	q := new(mps.Queue)
 	gh := new(games.Handler)
 
-	gamesChannel := make(chan *message.Message)
+	gamesChannel := make(chan *message.Message, 1)
 
 	q.On("Subscribe", ctx, pubsub.GamesTopic.String()).Once().
 		Return(func(context.Context, string) <-chan *message.Message {
@@ -264,12 +265,14 @@ func initGameHandlerAndMocks(ctx context.Context) (
 	return g, gamesChannel, q, gh
 }
 
-func sendMessageToChannel(t *testing.T, channel chan *message.Message, eventMsg []byte) {
+func sendMessageToChannel(t *testing.T, channel chan *message.Message, eventMsg []byte, shouldAck bool) {
 	newMessage := message.NewMessage(watermill.NewUUID(), eventMsg)
 	channel <- newMessage
 
 	require.Eventually(t, func() bool {
-		<-newMessage.Acked()
+		if shouldAck {
+			<-newMessage.Acked()
+		}
 
 		return true
 	}, time.Second, time.Millisecond)
@@ -279,6 +282,7 @@ func getConfig() handlersgames.Config {
 	return handlersgames.Config{
 		UpdateGamesInformationTicker: updateGame,
 		UpdateGamesListTicker:        updateGameList,
+		BufferEventTime:              bufferEventTime,
 	}
 }
 
@@ -288,9 +292,14 @@ func assertMocksCalled(
 	cancelFunc context.CancelFunc,
 	gh *games.Handler,
 	q *mps.Queue,
+	shouldPublish bool,
 ) {
 	<-called
-	<-called
+
+	if shouldPublish {
+		<-called
+	}
+
 	cancelFunc()
 
 	gh.AssertExpectations(t)
