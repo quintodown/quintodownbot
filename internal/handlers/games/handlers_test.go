@@ -127,6 +127,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		g, c, q, gh := initGameHandlerAndMocks(ctx)
 
 		called := make(chan interface{})
+		defer close(called)
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			sendMessageToChannel(t, c, []byte("{["), true)
@@ -141,7 +142,6 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		g.ExecuteHandlers(ctx)
 
 		assertMocksCalled(t, called, cancelFunc, gh, q, false)
-		close(called)
 	})
 
 	t.Run("it fails sending message after game update", func(t *testing.T) {
@@ -149,6 +149,7 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		g, c, q, gh := initGameHandlerAndMocks(ctx)
 
 		called := make(chan interface{})
+		defer close(called)
 
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			b, _ := easyjson.Marshal(pubsub.GameEvent{
@@ -177,7 +178,6 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		g.ExecuteHandlers(ctx)
 
 		assertMocksCalled(t, called, cancelFunc, gh, q, true)
-		close(called)
 	})
 }
 
