@@ -64,14 +64,13 @@ func TestGames_ExecuteHandlersGamesDoesNothing(t *testing.T) {
 		g, _, q, gh := initGameHandlerAndMocks(ctx)
 
 		called := make(chan interface{})
-
+		defer close(called)
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) { called <- true })
 		gh.On("UpdateGamesList").Maybe()
 
 		g.ExecuteHandlers(ctx)
 
 		assertMocksCalled(t, called, cancelFunc, gh, q, false)
-		close(called)
 	})
 
 	t.Run("it does nothing when game status not handled", func(t *testing.T) {
@@ -128,7 +127,6 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 		called := make(chan interface{})
 		defer close(called)
-
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			sendMessageToChannel(t, c, []byte("{["), true)
 			called <- true
@@ -136,12 +134,14 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 		q.On("Publish", pubsub.ErrorTopic.String(), mock.MatchedBy(func(m *message.Message) bool {
 			return string(m.Payload) == "{\"error\":\"parse error: EOF reached while skipping array/object or token "+
 				"near offset 2 of ''\"}"
-		})).Once().Return(nil)
+		})).Once().Run(func(mock.Arguments) {
+			called <- true
+		}).Return(nil)
 		gh.On("UpdateGamesList").Maybe()
 
 		g.ExecuteHandlers(ctx)
 
-		assertMocksCalled(t, called, cancelFunc, gh, q, false)
+		assertMocksCalled(t, called, cancelFunc, gh, q, true)
 	})
 
 	t.Run("it fails sending message after game update", func(t *testing.T) {
@@ -150,7 +150,6 @@ func TestGames_ExecuteHandlersGamesFails(t *testing.T) {
 
 		called := make(chan interface{})
 		defer close(called)
-
 		gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 			b, _ := easyjson.Marshal(pubsub.GameEvent{
 				Competition:    "NFL",
@@ -220,6 +219,7 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 			g, c, q, gh := initGameHandlerAndMocks(ctx)
 
 			called := make(chan interface{})
+			defer close(called)
 
 			gh.On("UpdateGamesInformation", true).Run(func(mock.Arguments) {
 				b, _ := easyjson.Marshal(td.gameEvent)
@@ -235,7 +235,6 @@ func TestGames_ExecuteHandlersGames(t *testing.T) {
 			g.ExecuteHandlers(ctx)
 
 			assertMocksCalled(t, called, cancelFunc, gh, q, true)
-			close(called)
 		})
 	}
 }

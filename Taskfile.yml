@@ -170,7 +170,7 @@ tasks:
       - install
       - generate
     cmds:
-      - go test -v -failfast -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic -shuffle on ./...
+      - go test -failfast -timeout 10s -race -count 5 -coverprofile=coverage.txt -covermode=atomic -shuffle on ./...
   mutation:
     desc: Run mutation testing
     deps:
