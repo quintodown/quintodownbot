@@ -4,32 +4,45 @@
 package app
 
 import (
+	"crypto/tls"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/javiyt/tweetgram/internal/telegram"
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/quintodown/quintodownbot/internal/clock"
+	"github.com/quintodown/quintodownbot/internal/games"
+	"github.com/quintodown/quintodownbot/internal/games/clients/espn"
+	proxy_client "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
+	"github.com/quintodown/quintodownbot/internal/handlers"
+	handlersgames "github.com/quintodown/quintodownbot/internal/handlers/games"
+
+	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
-	"github.com/javiyt/tweetgram/internal/handlers"
-	hse "github.com/javiyt/tweetgram/internal/handlers/error"
-	hstl "github.com/javiyt/tweetgram/internal/handlers/telegram"
-	hstw "github.com/javiyt/tweetgram/internal/handlers/twitter"
-	"github.com/javiyt/tweetgram/internal/pubsub"
+	hse "github.com/quintodown/quintodownbot/internal/handlers/error"
+	hstl "github.com/quintodown/quintodownbot/internal/handlers/telegram"
+	hstw "github.com/quintodown/quintodownbot/internal/handlers/twitter"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/sirupsen/logrus"
 
 	"github.com/dghubble/oauth1"
 	"github.com/google/wire"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/config"
-	"github.com/javiyt/tweetgram/internal/twitter"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/config"
+	"github.com/quintodown/quintodownbot/internal/twitter"
 
 	gt "github.com/javiyt/go-twitter/twitter"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 type customHandlerGenerator func() []handlers.EventHandler
+
+const (
+	updateGamesInformationTicker = time.Minute
+	updateGamesListTicker        = 6 * time.Hour
+)
 
 var (
 	queueInstance *gochannel.GoChannel
@@ -42,6 +55,12 @@ var (
 	telegramDeps = wire.NewSet(provideConfiguration, provideTBot, queue)
 	twitterDeps  = wire.NewSet(provideConfiguration, twitterClient, queue)
 	errorDeps    = wire.NewSet(provideConfiguration, queue, provideLogger)
+	gamesDeps    = wire.NewSet(
+		wire.NewSet(clock.NewUTCClock, wire.Bind(new(clock.Clock), new(clock.UTCClock))),
+		queue,
+		provideGameInfoClient,
+		provideGameHandler,
+	)
 )
 
 func ProvideApp() (*App, func(), error) {
@@ -202,6 +221,42 @@ func provideHandlerManager(q pubsub.Queue, h []handlers.EventHandler) *handlers.
 
 func initializeCustomHandlers() customHandlerGenerator {
 	return func() []handlers.EventHandler {
-		return nil
+		gamesHandler, _ := provideGames()
+
+		return []handlers.EventHandler{gamesHandler}
 	}
+}
+
+func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {
+	return []handlersgames.Option{
+		handlersgames.WithGameHandler(gh),
+		handlersgames.WithConfig(handlersgames.Config{
+			UpdateGamesInformationTicker: updateGamesInformationTicker,
+			UpdateGamesListTicker:        updateGamesListTicker,
+		}),
+		handlersgames.WithQueue(q),
+	}
+}
+
+func provideGames() (*handlersgames.Games, error) {
+	panic(wire.Build(gamesDeps, provideGameOptions, handlersgames.NewGames))
+}
+
+func provideGameHandler(gc games.GameInfoClient, q pubsub.Queue, clk clock.Clock) games.Handler {
+	return games.NewGameHandler(gc, true, q, clk)
+}
+
+func provideGameInfoClient(clk clock.Clock) games.GameInfoClient {
+	return proxy_client.NewProxyClient(proxy_client.WithESPNClient(espn.NewESPNClient(provideHTTClient(), clk)))
+}
+
+func provideHTTClient() *http.Client {
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = 5
+	httpClient := retryClient.StandardClient()
+	httpClient.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	return httpClient
 }

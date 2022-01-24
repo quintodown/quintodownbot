@@ -5,16 +5,18 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ThreeDotsLabs/watermill/message"
-	pubsub2 "github.com/javiyt/tweetgram/internal/pubsub"
-	"github.com/javiyt/tweetgram/mocks/pubsub"
+	pbsb "github.com/quintodown/quintodownbot/internal/pubsub"
 
-	"github.com/javiyt/tweetgram/internal/app"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/handlers"
+	"github.com/quintodown/quintodownbot/mocks/pubsub"
+
+	"github.com/ThreeDotsLabs/watermill/message"
+
+	"github.com/quintodown/quintodownbot/internal/app"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/handlers"
 	"github.com/stretchr/testify/require"
 
-	mockBot "github.com/javiyt/tweetgram/mocks/bot"
+	mockBot "github.com/quintodown/quintodownbot/mocks/bot"
 )
 
 type startAppError struct{}
@@ -96,7 +98,7 @@ func TestStart(t *testing.T) {
 			return mb, nil
 		}
 		mb.On("Start", context.Background()).Once().Return(nil)
-		q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+		q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 			Return(func(context.Context, string) <-chan *message.Message {
 				return make(chan *message.Message)
 			}, nil)
@@ -118,7 +120,7 @@ func TestRun(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Run").Once()
-	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)
@@ -139,7 +141,7 @@ func TestStop(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Stop").Once()
-	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)
