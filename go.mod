@@ -3,6 +3,8 @@ module github.com/quintodown/quintodownbot
 go 1.17
 
 require (
+	filippo.io/age v1.0.0
+	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
 	github.com/golangci/golangci-lint v1.43.0
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/javiyt/go-twitter v0.0.2
@@ -18,7 +20,7 @@ require (
 	4d63.com/gochecknoglobals v0.1.0 // indirect
 	github.com/Antonboom/errname v0.1.5 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/dghubble/oauth1 v0.7.0
+	github.com/dghubble/oauth1 v0.7.1
 	github.com/go-critic/go-critic v0.6.1 // indirect
 	github.com/google/wire v0.5.0
 	github.com/gordonklaus/ineffassign v0.0.0-20210914165742-4cc7213b9bc8 // indirect
