@@ -3,6 +3,8 @@ module github.com/quintodown/quintodownbot
 go 1.17
 
 require (
+	filippo.io/age v1.0.0
+	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
 	github.com/golangci/golangci-lint v1.43.0
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/javiyt/go-twitter v0.0.2
