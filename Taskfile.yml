@@ -141,7 +141,7 @@ tasks:
       - find ./internal -type f -name '*_easyjson.go' -delete
     sources:
       - internal/pubsub/broadcast.go
-      - internal/games/clients/espn/model.go      
+      - internal/games/clients/espn/model.go
     silent: true
   embed:
     desc: Generate embeded envFile

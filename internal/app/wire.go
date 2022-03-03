@@ -34,7 +34,7 @@ import (
 	"github.com/quintodown/quintodownbot/internal/twitter"
 
 	gt "github.com/javiyt/go-twitter/twitter"
-	tb "gopkg.in/tucnak/telebot.v2"
+	tb "gopkg.in/telebot.v3"
 )
 
 type customHandlerGenerator func() []handlers.EventHandler
@@ -253,7 +253,7 @@ func provideGameInfoClient(clk clock.Clock) games.GameInfoClient {
 func provideHTTClient() *http.Client {
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 5
-	httpClient := retryClient.StandardClient()
+	httpClient := retryClient.HTTPClient
 	httpClient.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
