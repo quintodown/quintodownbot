@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/telegram"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -13,8 +15,6 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/telegram"
 	"github.com/stretchr/testify/require"
 	tb "gopkg.in/telebot.v3"
 )
@@ -226,7 +226,7 @@ func TestBot_GetFile(t *testing.T) {
 
 		bt := telegram.NewBot(tlgmbot)
 
-	_, err = bt.GetFile("AZCDxruqG7J3iTM9")
+		_, err = bt.GetFile("AZCDxruqG7J3iTM9")
 
 		require.EqualError(t, err, "telebot: unexpected end of JSON input")
 	})

@@ -39,8 +39,6 @@ import (
 
 type customHandlerGenerator func() []handlers.EventHandler
 
-type customHandlerGenerator func() []handlers.EventHandler
-
 const (
 	updateGamesInformationTicker = time.Minute
 	updateGamesListTicker        = 6 * time.Hour
@@ -255,7 +253,7 @@ func provideGameInfoClient(clk clock.Clock) games.GameInfoClient {
 func provideHTTClient() *http.Client {
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 5
-	httpClient := retryClient.StandardClient()
+	httpClient := retryClient.HTTPClient
 	httpClient.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}

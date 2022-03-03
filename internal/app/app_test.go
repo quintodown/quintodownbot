@@ -31,18 +31,6 @@ func (m botInstanceError) Error() string {
 	return "bot instance not ready"
 }
 
-type startAppError struct{}
-
-func (m startAppError) Error() string {
-	return "could not start"
-}
-
-type botInstanceError struct{}
-
-func (m botInstanceError) Error() string {
-	return "bot instance not ready"
-}
-
 func TestInitializeConfiguration(t *testing.T) {
 	envFile := []byte("BOT_TOKEN=asdfg")
 	envTestFile := []byte("BOT_TOKEN=qwert")
