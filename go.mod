@@ -3,6 +3,7 @@ module github.com/quintodown/quintodownbot
 go 1.17
 
 require (
+	filippo.io/age v1.0.0
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
 	github.com/golangci/golangci-lint v1.44.2
 	github.com/hashicorp/go-retryablehttp v0.5.3
@@ -61,7 +62,6 @@ require (
 )
 
 require (
-	filippo.io/age v1.0.0 // indirect
 	github.com/Antonboom/nilnil v0.1.0 // indirect
 	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect

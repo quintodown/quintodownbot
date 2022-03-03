@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/quintodown/quintodownbot/internal/bot"
-	"github.com/quintodown/quintodownbot/internal/telegram"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -13,6 +11,9 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
