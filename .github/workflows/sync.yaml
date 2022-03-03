@@ -1,0 +1,34 @@
+name: Sync Fork
+on:
+  # schedule:
+    # - cron:  '0 7 * * 1,4'
+    # scheduled at 07:00 every Monday and Thursday
+  workflow_dispatch:  # click the button on Github repo!
+
+jobs:
+  update_forked:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update forked repository from upstream
+        uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          upstream_repository: javiyt/tweetgram
+          target_repository: quintodown/quintodownbot
+          upstream_branch: main
+          target_branch: upstream_update
+          force: true
+          tags: true
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: upstream_update
+          fetch-depth: 0
+      - name: Create pull request
+        uses: devops-infra/action-pull-request@v0.4.2
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          source_branch: upstream_update
+          target_branch: main
+          assignee: javiyt
+          body: Update from fork

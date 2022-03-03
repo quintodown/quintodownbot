@@ -226,7 +226,7 @@ func TestBot_GetFile(t *testing.T) {
 
 		bt := telegram.NewBot(tlgmbot)
 
-		_, err = bt.GetFile("AZCDxruqG7J3iTM9")
+	_, err = bt.GetFile("AZCDxruqG7J3iTM9")
 
 		require.EqualError(t, err, "telebot: unexpected end of JSON input")
 	})

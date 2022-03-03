@@ -4,11 +4,11 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/config"
-	"github.com/javiyt/tweetgram/internal/handlers"
-	"github.com/javiyt/tweetgram/internal/pubsub"
 	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/config"
+	"github.com/quintodown/quintodownbot/internal/handlers"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 )
 
 type Telegram struct {

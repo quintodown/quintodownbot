@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/javiyt/tweetgram/internal/pubsub"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 
-	"github.com/javiyt/tweetgram/internal/config"
-	tb "gopkg.in/telebot.v3"
+	"github.com/quintodown/quintodownbot/internal/config"
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 type TelegramBot interface {
@@ -21,7 +21,7 @@ type TelegramBot interface {
 	GetFile(string) (io.ReadCloser, error)
 }
 
-type TelegramHandler func(*TelegramMessage) error
+type TelegramHandler func(*TelegramMessage)
 
 type TelegramBotCommand struct {
 	Text        string

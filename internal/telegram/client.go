@@ -2,13 +2,12 @@ package telegram
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"strconv"
 	"strings"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	tb "gopkg.in/telebot.v3"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 const telegramMessageLength = 4096
