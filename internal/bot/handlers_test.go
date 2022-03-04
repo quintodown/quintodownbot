@@ -14,7 +14,7 @@ import (
 	mb "github.com/quintodown/quintodownbot/mocks/bot"
 	"github.com/stretchr/testify/mock"
 
-	tb "gopkg.in/tucnak/telebot.v2"
+	tb "gopkg.in/telebot.v3"
 )
 
 const (
