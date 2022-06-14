@@ -13,7 +13,7 @@ import (
 	"github.com/quintodown/quintodownbot/internal/clock"
 	"github.com/quintodown/quintodownbot/internal/games"
 	"github.com/quintodown/quintodownbot/internal/games/clients/espn"
-	proxy_client "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
+	proxyclient "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
 	"github.com/quintodown/quintodownbot/internal/handlers"
 	handlersgames "github.com/quintodown/quintodownbot/internal/handlers/games"
 
@@ -37,13 +37,13 @@ import (
 	tb "gopkg.in/telebot.v3"
 )
 
-type customHandlerGenerator func() []handlers.EventHandler
-
 const (
 	updateGamesInformationTicker = time.Minute
 	updateGamesListTicker        = 6 * time.Hour
 	bufferEventTime              = 5 * time.Second
 )
+
+type customHandlerGenerator func() []handlers.EventHandler
 
 var (
 	queueInstance *gochannel.GoChannel
@@ -249,7 +249,7 @@ func provideGameHandler(gc games.GameInfoClient, q pubsub.Queue, clk clock.Clock
 }
 
 func provideGameInfoClient(clk clock.Clock) games.GameInfoClient {
-	return proxy_client.NewProxyClient(proxy_client.WithESPNClient(espn.NewESPNClient(provideHTTClient(), clk)))
+	return proxyclient.NewProxyClient(proxyclient.WithESPNClient(espn.NewESPNClient(provideHTTClient(), clk)))
 }
 
 func provideHTTClient() *http.Client {
