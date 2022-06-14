@@ -5,11 +5,9 @@ import (
 	"os"
 	"testing"
 
-	pbsb "github.com/quintodown/quintodownbot/internal/pubsub"
-
-	"github.com/quintodown/quintodownbot/mocks/pubsub"
-
 	"github.com/ThreeDotsLabs/watermill/message"
+	pubsub2 "github.com/quintodown/quintodownbot/internal/pubsub"
+	"github.com/quintodown/quintodownbot/mocks/pubsub"
 
 	"github.com/quintodown/quintodownbot/internal/app"
 	"github.com/quintodown/quintodownbot/internal/bot"
@@ -98,7 +96,7 @@ func TestStart(t *testing.T) {
 			return mb, nil
 		}
 		mb.On("Start", context.Background()).Once().Return(nil)
-		q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
+		q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
 			Return(func(context.Context, string) <-chan *message.Message {
 				return make(chan *message.Message)
 			}, nil)
@@ -120,7 +118,7 @@ func TestRun(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Run").Once()
-	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)
@@ -141,7 +139,7 @@ func TestStop(t *testing.T) {
 
 	mb.On("Start", context.Background()).Once().Return(nil)
 	mb.On("Stop").Once()
-	q.On("Subscribe", context.Background(), pbsb.CommandTopic.String()).
+	q.On("Subscribe", context.Background(), pubsub2.CommandTopic.String()).
 		Return(func(context.Context, string) <-chan *message.Message {
 			return make(chan *message.Message)
 		}, nil)
