@@ -14,8 +14,20 @@ import (
 	"github.com/javiyt/tweetgram/internal/handlers"
 	"github.com/stretchr/testify/require"
 
-	mockBot "github.com/javiyt/tweetgram/mocks/bot"
+	mockBot "github.com/quintodown/quintodownbot/mocks/bot"
 )
+
+type startAppError struct{}
+
+func (m startAppError) Error() string {
+	return "could not start"
+}
+
+type botInstanceError struct{}
+
+func (m botInstanceError) Error() string {
+	return "bot instance not ready"
+}
 
 type startAppError struct{}
 

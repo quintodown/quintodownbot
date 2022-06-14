@@ -3,8 +3,8 @@ package handlerserror
 import (
 	"context"
 
-	"github.com/javiyt/tweetgram/internal/pubsub"
 	"github.com/mailru/easyjson"
+	"github.com/quintodown/quintodownbot/internal/pubsub"
 	"github.com/sirupsen/logrus"
 )
 
