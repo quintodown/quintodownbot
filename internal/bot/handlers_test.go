@@ -137,6 +137,7 @@ func TestHandlersFilters(t *testing.T) {
 				handler(testCases[i].m)
 
 				mockedBot.AssertExpectations(t)
+				mockedQueue.Test(t)
 				mockedQueue.AssertNotCalled(t, "Publish", mock.Anything, mock.Anything)
 			})
 		}
@@ -168,6 +169,7 @@ func TestHandlerPhoto(t *testing.T) {
 		})
 
 		mockedBot.AssertExpectations(t)
+		mockedQueue.Test(t)
 		mockedQueue.AssertNotCalled(t, "Publish", mock.Anything, mock.Anything)
 	})
 
@@ -215,6 +217,7 @@ func TestHandlerText(t *testing.T) {
 		})
 
 		mockedBot.AssertExpectations(t)
+		mockedQueue.Test(t)
 		mockedQueue.AssertNotCalled(t, "Send", mock.Anything, mock.Anything)
 	})
 
