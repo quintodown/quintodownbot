@@ -55,6 +55,7 @@ var (
 	telegramDeps = wire.NewSet(provideConfiguration, provideTBot, queue)
 	twitterDeps  = wire.NewSet(provideConfiguration, twitterClient, queue)
 	errorDeps    = wire.NewSet(provideConfiguration, queue, provideLogger)
+	tbBot        = wire.NewSet(provideConfiguration, provideTBotSettings, tb.NewBot, wire.Bind(new(telegram.TbBot), new(*tb.Bot)))
 	gamesDeps    = wire.NewSet(
 		wire.NewSet(clock.NewUTCClock, wire.Bind(new(clock.Clock), new(clock.UTCClock))),
 		queue,
@@ -93,7 +94,7 @@ func provideConfiguration() (config.AppConfig, error) {
 }
 
 func provideTBot() (bot.TelegramBot, error) {
-	panic(wire.Build(provideConfiguration, provideTBotSettings, tb.NewBot, telegram.NewBot))
+	panic(wire.Build(tbBot, telegram.NewBot))
 }
 
 func provideTBotSettings(cfg config.AppConfig) tb.Settings {

@@ -117,7 +117,7 @@ func (ec *Client) getRequest(
 
 	ep.RawQuery = params.Encode()
 
-	req, err := http.NewRequest("GET", ep.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, ep.String(), nil)
 	if err != nil {
 		return nil, err
 	}

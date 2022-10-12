@@ -13,11 +13,21 @@ import (
 
 const telegramMessageLength = 4096
 
-type Bot struct {
-	b *tb.Bot
+type TbBot interface {
+	Start()
+	Stop()
+	SetCommands(opts ...interface{}) error
+	Handle(endpoint interface{}, h tb.HandlerFunc, m ...tb.MiddlewareFunc)
+	Send(to tb.Recipient, what interface{}, opts ...interface{}) (*tb.Message, error)
+	File(file *tb.File) (io.ReadCloser, error)
+	FileByID(fileID string) (tb.File, error)
 }
 
-func NewBot(b *tb.Bot) bot.TelegramBot {
+type Bot struct {
+	b TbBot
+}
+
+func NewBot(b TbBot) bot.TelegramBot {
 	return &Bot{b: b}
 }
 
@@ -53,15 +63,14 @@ func (b *Bot) Handle(endpoint string, handler bot.TelegramHandler) {
 				FileSize: m.Message().Photo.FileSize,
 			}
 		}
-		message := bot.TelegramMessage{
+
+		return handler(&bot.TelegramMessage{
 			SenderID:  fmt.Sprintf("%v", m.Sender().ID),
 			Text:      m.Text(),
 			Payload:   m.Message().Payload,
 			Photo:     p,
 			IsPrivate: m.Chat().Private,
-		}
-
-		return handler(&message)
+		})
 	})
 }
 

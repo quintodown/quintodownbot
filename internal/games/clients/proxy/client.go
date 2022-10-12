@@ -1,4 +1,4 @@
-package proxy_client
+package proxyClient
 
 import (
 	"github.com/quintodown/quintodownbot/internal/games"

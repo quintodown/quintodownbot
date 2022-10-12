@@ -41,7 +41,7 @@ type TelegramPhoto struct {
 	Caption  string
 	FileID   string
 	FileURL  string
-	FileSize int
+	FileSize int64
 }
 
 type AppBot interface {
