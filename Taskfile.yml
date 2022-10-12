@@ -181,6 +181,7 @@ tasks:
     cmds:
       - echo "Generating mocks for all interfaces"
       - go run github.com/vektra/mockery/v2/ --all --inpackage --keeptree --dir=internal
+      - go run github.com/vektra/mockery/v2/ --name=Context --inpackage --keeptree --dir=vendor/gopkg.in/telebot.v3/ --output=mocks/telebot/
     sources:
       - internal/**/*.go
     generates:
