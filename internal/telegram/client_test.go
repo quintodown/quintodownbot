@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/quintodown/quintodownbot/mocks/telebot"
-	tbBotMock "github.com/quintodown/quintodownbot/mocks/telegram"
 	"math/rand"
 	"net/http"
 	"os"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/quintodown/quintodownbot/mocks/telebot"
+	tbBotMock "github.com/quintodown/quintodownbot/mocks/telegram"
 
 	"github.com/quintodown/quintodownbot/internal/bot"
 	"github.com/quintodown/quintodownbot/internal/telegram"

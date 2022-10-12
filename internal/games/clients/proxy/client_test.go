@@ -1,11 +1,11 @@
-package proxy_client_test
+package proxyClient_test
 
 import (
 	"testing"
 	"time"
 
 	"github.com/quintodown/quintodownbot/internal/games"
-	proxy_client "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
+	proxyClient "github.com/quintodown/quintodownbot/internal/games/clients/proxy"
 	mgames "github.com/quintodown/quintodownbot/mocks/games"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +19,7 @@ func TestProxyClient_GetGames(t *testing.T) {
 		},
 	}, nil)
 
-	gms, err := proxy_client.NewProxyClient(proxy_client.WithESPNClient(espn)).
+	gms, err := proxyClient.NewProxyClient(proxyClient.WithESPNClient(espn)).
 		GetGames(games.NFL)
 
 	require.NoError(t, err)
@@ -36,7 +36,7 @@ func TestProxyClient_GetGameInformation(t *testing.T) {
 		Start: start,
 	}, nil)
 
-	gm, err := proxy_client.NewProxyClient(proxy_client.WithESPNClient(espn)).
+	gm, err := proxyClient.NewProxyClient(proxyClient.WithESPNClient(espn)).
 		GetGameInformation(games.NFL, "12345")
 
 	require.NoError(t, err)
