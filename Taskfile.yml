@@ -103,10 +103,13 @@ tasks:
       - install
     cmds:
       - go run golang.org/x/tools/cmd/stringer -type=TopicName,CommandName internal/pubsub/broadcast.go
+      - go run golang.org/x/tools/cmd/stringer -type=GameChange,Competition,GameState internal/games/model.go
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/model.go
     generates:
       - internal/pubsub/topicname_string.go
+      - internal/games/gamechange_string.go
   clean-stringer:
     desc: Remove all stringer generated files
     run: once
@@ -114,6 +117,7 @@ tasks:
       - find ./internal -type f -name '*_string.go' -delete
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/model.go
     silent: true
   json:
     desc: Generate json Marshal/Unmarshal functions
@@ -123,10 +127,13 @@ tasks:
       - install
     cmds:
       - go run github.com/mailru/easyjson/easyjson internal/pubsub/broadcast.go
+      - go run github.com/mailru/easyjson/easyjson internal/games/clients/espn/model.go
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/clients/espn/model.go
     generates:
       - internal/pubsub/broadcast_easyjson.go
+      - internal/games/clients/espn/model_easyjson.go
   clean-json:
     desc: Remove all json generated files
     run: once
@@ -134,6 +141,7 @@ tasks:
       - find ./internal -type f -name '*_easyjson.go' -delete
     sources:
       - internal/pubsub/broadcast.go
+      - internal/games/clients/espn/model.go
     silent: true
   embed:
     desc: Generate embeded envFile
@@ -172,11 +180,10 @@ tasks:
       - install
     cmds:
       - echo "Generating mocks for all interfaces"
-      - go run github.com/vektra/mockery/v2/ --all --inpackage --keeptree --dir=internal --output=mocks
+      - go run github.com/vektra/mockery/v2/ --all --inpackage --keeptree --dir=internal
       - go run github.com/vektra/mockery/v2/ --name=Context --inpackage --keeptree --dir=vendor/gopkg.in/telebot.v3/ --output=mocks/telebot/
     sources:
       - internal/**/*.go
-      - vendor/gopkg.in/telebot.v3/
     generates:
       - mocks/**/*.go
   clean-mock:

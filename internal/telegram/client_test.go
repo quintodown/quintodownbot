@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/quintodown/quintodownbot/mocks/telebot"
+	tbBotMock "github.com/quintodown/quintodownbot/mocks/telegram"
 	"math/rand"
 	"net/http"
 	"os"
@@ -12,13 +14,10 @@ import (
 	"testing"
 	"time"
 
-	tbBotMock "github.com/javiyt/tweetgram/mocks/telegram"
-
-	"github.com/javiyt/tweetgram/mocks/telebot"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/telegram"
 	"github.com/stretchr/testify/require"
 	tb "gopkg.in/telebot.v3"
 )
@@ -138,7 +137,7 @@ func TestBot_Handle(t *testing.T) {
 
 	handled.Store(false)
 
-	bt.Handle(tb.OnPhoto, func(m bot.TelegramMessage) error {
+	bt.Handle(tb.OnPhoto, func(m *bot.TelegramMessage) error {
 		handled.Store(m.Photo.Caption == "image")
 
 		return nil

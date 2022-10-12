@@ -3,9 +3,9 @@ package bot_test
 import (
 	"testing"
 
-	"github.com/javiyt/tweetgram/internal/bot"
-	mb "github.com/javiyt/tweetgram/mocks/bot"
-	mq "github.com/javiyt/tweetgram/mocks/pubsub"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	mb "github.com/quintodown/quintodownbot/mocks/bot"
+	mq "github.com/quintodown/quintodownbot/mocks/pubsub"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	tb "gopkg.in/telebot.v3"
