@@ -193,6 +193,8 @@ func provideTwitterHandler() (*hstw.Twitter, error) {
 
 func provideErrorHandler() (*hse.ErrorHandler, func(), error) {
 	panic(wire.Build(errorDeps, hse.NewErrorHandler))
+}
+
 func initializeCustomHandlers() customHandlerGenerator {
 	return func() []handlers.EventHandler {
 		gamesHandler, _ := provideGames()
@@ -226,10 +228,6 @@ func provideHandlerManager(q pubsub.Queue, h []handlers.EventHandler) *handlers.
 	return handlers.NewHandlersManager(q, h...)
 }
 
-func initializeCustomHandlers() customHandlerGenerator {
-	return func() []handlers.EventHandler {
-		return nil
-	}
 func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {
 	return []handlersgames.Option{
 		handlersgames.WithGameHandler(gh),
