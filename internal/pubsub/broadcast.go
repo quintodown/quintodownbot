@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"context"
+	"time"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 )
@@ -16,6 +17,7 @@ const (
 	PhotoTopic
 	TextTopic
 	CommandTopic
+	GamesTopic
 )
 
 const (

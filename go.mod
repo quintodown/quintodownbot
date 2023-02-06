@@ -1,4 +1,4 @@
-module github.com/javiyt/tweetgram
+module github.com/quintodown/quintodownbot
 
 go 1.18
 
@@ -119,6 +119,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gostaticanalysis/comment v1.4.2 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

@@ -1,0 +1,40 @@
+{
+  "Id": "401326613",
+  "Start": "2021-08-19T23:30:00Z",
+  "Name": "New England Patriots @ Philadelphia Eagles",
+  "Venue": {
+    "FullName": "Lincoln Financial Field",
+    "Address": {
+      "City": "Philadelphia",
+      "State": "PA"
+    },
+    "Capacity": 69879,
+    "Indoor": false
+  },
+  "Status": {
+    "Clock": 0,
+    "DisplayClock": "",
+    "Period": 0,
+    "State": 3
+  },
+  "Weather": {
+    "DisplayValue": "",
+    "Temperature": -17
+  },
+  "HomeTeam": {
+    "Score": 0,
+    "Name": "Philadelphia Eagles",
+    "ShortDisplayName": "Eagles",
+    "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png",
+    "Record": "0-2"
+  },
+  "AwayTeam": {
+    "Score": 35,
+    "Name": "New England Patriots",
+    "ShortDisplayName": "Patriots",
+    "Logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ne.png",
+    "Record": "2-0"
+  },
+  "WeekName": "",
+  "Competition": 0
+}
