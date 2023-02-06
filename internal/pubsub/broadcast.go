@@ -2,8 +2,9 @@ package pubsub
 
 import (
 	"context"
-	"github.com/ThreeDotsLabs/watermill/message"
 	"time"
+
+	"github.com/ThreeDotsLabs/watermill/message"
 )
 
 type (
