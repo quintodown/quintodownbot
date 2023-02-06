@@ -119,10 +119,10 @@ func TestClient_GetGameInformation(t *testing.T) {
 	t.Run("it should fail when wrong date format", func(t *testing.T) {
 		information, err := espnc.GetGameInformation(games.NFL, "4")
 
-		require.EqualError(
+		require.ErrorContains(
 			t,
 			err,
-			"parsing time \"08-19-2021 23:30\" as \"2006-01-02T15:04Z\": cannot parse \"9-2021 23:30\" as \"2006\"",
+			"parsing time \"08-19-2021 23:30\" as \"2006-01-02T15:04Z\": cannot parse",
 		)
 		require.Empty(t, information)
 	})

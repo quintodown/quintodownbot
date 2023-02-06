@@ -72,7 +72,7 @@ func (ec *Client) GetGameInformation(competition games.Competition, id string) (
 	return gsc.toGame(competition)
 }
 
-func (ec Client) executeCall(
+func (ec *Client) executeCall(
 	endpoint string,
 	c games.Competition,
 	parameters urlParameters,

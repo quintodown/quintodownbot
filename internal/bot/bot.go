@@ -21,7 +21,7 @@ type TelegramBot interface {
 	GetFile(string) (io.ReadCloser, error)
 }
 
-type TelegramHandler func(*TelegramMessage) error
+type TelegramHandler func(TelegramMessage) error
 
 type TelegramBotCommand struct {
 	Text        string

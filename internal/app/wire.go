@@ -195,6 +195,14 @@ func provideErrorHandler() (*hse.ErrorHandler, func(), error) {
 	panic(wire.Build(errorDeps, hse.NewErrorHandler))
 }
 
+func initializeCustomHandlers() customHandlerGenerator {
+	return func() []handlers.EventHandler {
+		gamesHandler, _ := provideGames()
+
+		return []handlers.EventHandler{gamesHandler}
+	}
+}
+
 func provideHandlers(customHandlers customHandlerGenerator) ([]handlers.EventHandler, func(), error) {
 	telegramHandler, err := provideTelegramHandler()
 	if err != nil {
@@ -218,14 +226,6 @@ func provideHandlers(customHandlers customHandlerGenerator) ([]handlers.EventHan
 
 func provideHandlerManager(q pubsub.Queue, h []handlers.EventHandler) *handlers.Manager {
 	return handlers.NewHandlersManager(q, h...)
-}
-
-func initializeCustomHandlers() customHandlerGenerator {
-	return func() []handlers.EventHandler {
-		gamesHandler, _ := provideGames()
-
-		return []handlers.EventHandler{gamesHandler}
-	}
 }
 
 func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option {

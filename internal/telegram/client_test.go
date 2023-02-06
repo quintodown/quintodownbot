@@ -138,7 +138,7 @@ func TestBot_Handle(t *testing.T) {
 
 	handled.Store(false)
 
-	bt.Handle(tb.OnPhoto, func(m *bot.TelegramMessage) error {
+	bt.Handle(tb.OnPhoto, func(m bot.TelegramMessage) error {
 		handled.Store(m.Photo.Caption == "image")
 
 		return nil

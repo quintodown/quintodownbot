@@ -90,7 +90,7 @@ func (g *Games) updateGamesInformation(ctx context.Context) {
 	go g.sendGameUpdate(messages)
 }
 
-func (g Games) updateGameList(ctx context.Context) {
+func (g *Games) updateGameList(ctx context.Context) {
 	go func() {
 		for {
 			select {
