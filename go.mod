@@ -41,7 +41,7 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tetafro/godot v1.4.11 // indirect
 	github.com/timakin/bodyclose v0.0.0-20221125081123-e39cf3fc478e // indirect
-	golang.org/x/crypto v0.1.0 // indirect
+	golang.org/x/crypto v0.4.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/term v0.4.0 // indirect
 	mvdan.cc/unparam v0.0.0-20221223090309-7455f1af531d // indirect
@@ -61,7 +61,7 @@ require (
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.2.1 // indirect
-	filippo.io/age v1.0.0 // indirect
+	filippo.io/age v1.1.1 // indirect
 	github.com/Abirdcfly/dupword v0.0.9 // indirect
 	github.com/Antonboom/nilnil v0.1.1 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
