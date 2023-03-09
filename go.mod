@@ -1,10 +1,12 @@
-module github.com/javiyt/tweetgram
+module github.com/quintodown/quintodownbot
 
 go 1.18
 
 require (
+	filippo.io/age v1.0.0
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
 	github.com/golangci/golangci-lint v1.51.2
+	github.com/hashicorp/go-retryablehttp v0.5.3
 	github.com/javiyt/go-twitter v0.0.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.8.2
@@ -60,7 +62,6 @@ require (
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.2.1 // indirect
-	filippo.io/age v1.0.0 // indirect
 	github.com/Abirdcfly/dupword v0.0.9 // indirect
 	github.com/Antonboom/nilnil v0.1.1 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
@@ -119,6 +120,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gostaticanalysis/comment v1.4.2 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

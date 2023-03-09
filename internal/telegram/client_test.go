@@ -12,13 +12,13 @@ import (
 	"testing"
 	"time"
 
-	tbBotMock "github.com/javiyt/tweetgram/mocks/telegram"
+	"github.com/quintodown/quintodownbot/mocks/telebot"
+	tbBotMock "github.com/quintodown/quintodownbot/mocks/telegram"
 
-	"github.com/javiyt/tweetgram/mocks/telebot"
+	"github.com/quintodown/quintodownbot/internal/bot"
+	"github.com/quintodown/quintodownbot/internal/telegram"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/javiyt/tweetgram/internal/bot"
-	"github.com/javiyt/tweetgram/internal/telegram"
 	"github.com/stretchr/testify/require"
 	tb "gopkg.in/telebot.v3"
 )
