@@ -72,7 +72,7 @@ func (ec *Client) GetGameInformation(competition games.Competition, id string) (
 	return gsc.toGame(competition)
 }
 
-func (ec Client) executeCall(
+func (ec *Client) executeCall(
 	endpoint string,
 	c games.Competition,
 	parameters urlParameters,
@@ -117,7 +117,7 @@ func (ec *Client) getRequest(
 
 	ep.RawQuery = params.Encode()
 
-	req, err := http.NewRequest("GET", ep.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, ep.String(), nil)
 	if err != nil {
 		return nil, err
 	}

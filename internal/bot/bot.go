@@ -21,7 +21,7 @@ type TelegramBot interface {
 	GetFile(string) (io.ReadCloser, error)
 }
 
-type TelegramHandler func(*TelegramMessage) error
+type TelegramHandler func(TelegramMessage) error
 
 type TelegramBotCommand struct {
 	Text        string
@@ -41,7 +41,7 @@ type TelegramPhoto struct {
 	Caption  string
 	FileID   string
 	FileURL  string
-	FileSize int
+	FileSize int64
 }
 
 type AppBot interface {

@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
-        uses: actions/setup-go@v3.3.0
+        uses: actions/setup-go@v4.0.0
         with:
-          go-version: 1.18.3
+          go-version: 1.20
       - name: Install Task
-        uses: arduino/setup-task@v1.0.1
+        uses: arduino/setup-task@v1.0.3
         with:
-          version: 3.11.0
+          version: 3.20.0
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Generate env file
@@ -41,7 +41,7 @@ jobs:
       - name: Build Binary
         run: go build -o ${{secrets.BINARY_NAME}} cmd/*.go
       - name: Find and Replace binary folder
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "/home/tweetgram/bin"
           replace: ${{secrets.FOLDER}}
@@ -49,7 +49,7 @@ jobs:
           include: "system/*"
           exclude: ".git/"
       - name: Find and Replace binary name
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "tweetgram_bin"
           replace: ${{secrets.BINARY_NAME}}
@@ -57,7 +57,7 @@ jobs:
           include: "system/*"
           exclude: ".git/"
       - name: Find and Replace bot name
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "Tweetgram"
           replace: ${{secrets.BOT_NAME}}

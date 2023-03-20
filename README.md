@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/quintodown/quintodownbot/branch/main/graph/badge.svg?token=Q15YVM2SMC)](https://codecov.io/gh/javiyt/tweetgram)
 [![Test](https://github.com/quintodown/quintodownbot/actions/workflows/ci.yml/badge.svg)](https://github.com/javiyt/tweetgram/actions/workflows/ci.yml)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 Telegram bot to publish post to twitter
 
