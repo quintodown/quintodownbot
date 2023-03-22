@@ -4,13 +4,13 @@ go 1.18
 
 require (
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
-	github.com/golangci/golangci-lint v1.52.0
+	github.com/golangci/golangci-lint v1.52.1
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/javiyt/go-twitter v0.0.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.8.2
 	github.com/subosito/gotenv v1.4.2
-	github.com/vektra/mockery/v2 v2.23.0
+	github.com/vektra/mockery/v2 v2.23.1
 	gopkg.in/telebot.v3 v3.1.3
 	mvdan.cc/gofumpt v0.4.0
 )
