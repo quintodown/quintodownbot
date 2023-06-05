@@ -4,13 +4,13 @@ go 1.18
 
 require (
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
-	github.com/golangci/golangci-lint v1.53.0
+	github.com/golangci/golangci-lint v1.53.2
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/javiyt/go-twitter v0.0.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.8.4
 	github.com/subosito/gotenv v1.4.2
-	github.com/vektra/mockery/v2 v2.28.1
+	github.com/vektra/mockery/v2 v2.28.2
 	gopkg.in/telebot.v3 v3.1.3
 	mvdan.cc/gofumpt v0.5.0
 )
@@ -54,7 +54,7 @@ require (
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/javiyt/twitter-text-go v0.0.0-20211005143923-7fd06898aff9
 	github.com/mailru/easyjson v0.7.7
-	github.com/sirupsen/logrus v1.9.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/zimmski/go-mutesting v0.0.0-20210610104036-6d9217011a00
 	golang.org/x/tools v0.9.3
 )
@@ -69,7 +69,7 @@ require (
 	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect
 	github.com/GaijinEntertainment/go-exhaustruct/v2 v2.3.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/OpenPeeDeeP/depguard/v2 v2.0.1 // indirect
+	github.com/OpenPeeDeeP/depguard/v2 v2.1.0 // indirect
 	github.com/alexkohler/nakedret/v2 v2.0.1 // indirect
 	github.com/alexkohler/prealloc v1.0.0 // indirect
 	github.com/alingse/asasalint v0.0.11 // indirect
