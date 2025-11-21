@@ -20,7 +20,7 @@ jobs:
           force: true
           tags: true
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: upstream_update
           fetch-depth: 0
