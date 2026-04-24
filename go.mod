@@ -21,7 +21,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dghubble/oauth1 v0.7.3
 	github.com/go-critic/go-critic v0.11.2 // indirect
-	github.com/google/wire v0.6.0
+	github.com/google/wire v0.7.0
 	github.com/gordonklaus/ineffassign v0.1.0 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
 	github.com/gostaticanalysis/forcetypeassert v0.1.0 // indirect
