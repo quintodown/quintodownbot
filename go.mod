@@ -5,13 +5,13 @@ go 1.23
 require (
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290
 	github.com/golangci/golangci-lint v1.57.2
-	github.com/hashicorp/go-retryablehttp v0.7.5
+	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/javiyt/go-twitter v0.0.3
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.10.0
 	github.com/subosito/gotenv v1.6.0
 	github.com/vektra/mockery/v2 v2.53.4
-	gopkg.in/telebot.v3 v3.2.1
+	gopkg.in/telebot.v3 v3.3.8
 	mvdan.cc/gofumpt v0.6.0
 )
 
@@ -21,7 +21,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dghubble/oauth1 v0.7.3
 	github.com/go-critic/go-critic v0.11.2 // indirect
-	github.com/google/wire v0.6.0
+	github.com/google/wire v0.7.0
 	github.com/gordonklaus/ineffassign v0.1.0 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
 	github.com/gostaticanalysis/forcetypeassert v0.1.0 // indirect
@@ -50,7 +50,7 @@ require (
 	github.com/ThreeDotsLabs/watermill v1.3.4
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/subcommands v1.2.0 // indirect
-	github.com/jarcoal/httpmock v1.3.1
+	github.com/jarcoal/httpmock v1.4.1
 	github.com/javiyt/twitter-text-go v0.0.0-20211005143923-7fd06898aff9
 	github.com/mailru/easyjson v0.7.7
 	github.com/sirupsen/logrus v1.9.3
