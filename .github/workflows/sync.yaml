@@ -20,12 +20,12 @@ jobs:
           force: true
           tags: true
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: upstream_update
           fetch-depth: 0
       - name: Create pull request
-        uses: devops-infra/action-pull-request@v1.0.2
+        uses: devops-infra/action-pull-request@v1.4.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           source_branch: upstream_update
