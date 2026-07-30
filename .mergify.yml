@@ -1,17 +1,13 @@
+# Mergify configuration - auto-merge for javiyt's PRs after CI passes
 pull_request_rules:
-  - name: Automatic merge when checks
+  - name: Automatic merge for javiyt's PRs after CI passes
     conditions:
-      - author=javiyt
-      - base=main
+      - "author=javiyt"
+      - "status-success=*"
+      - "base=main"
+      - "-conflict"
+      - "-draft"
     actions:
-      update:
+      rebase: {}
       merge:
         method: squash
-  - name: automatic merge for Dependabot pull requests
-    conditions:
-      - author~=^dependabot(|-preview)\[bot\]$
-      - base=main
-    actions:
-      update:
-      merge:
-        method: squash        
