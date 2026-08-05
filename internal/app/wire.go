@@ -40,6 +40,7 @@ import (
 const (
 	updateGamesInformationTicker = time.Minute
 	updateGamesListTicker        = 6 * time.Hour
+	bufferEventTime              = 5 * time.Second
 )
 
 type customHandlerGenerator func() []handlers.EventHandler
@@ -234,6 +235,7 @@ func provideGameOptions(gh games.Handler, q pubsub.Queue) []handlersgames.Option
 		handlersgames.WithConfig(handlersgames.Config{
 			UpdateGamesInformationTicker: updateGamesInformationTicker,
 			UpdateGamesListTicker:        updateGamesListTicker,
+			BufferEventTime:              bufferEventTime,
 		}),
 		handlersgames.WithQueue(q),
 	}

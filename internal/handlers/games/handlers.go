@@ -3,6 +3,7 @@ package handlersgames
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/ThreeDotsLabs/watermill"
@@ -23,6 +24,7 @@ type Games struct {
 type Config struct {
 	UpdateGamesInformationTicker time.Duration
 	UpdateGamesListTicker        time.Duration
+	BufferEventTime              time.Duration
 }
 
 type Option func(g *Games)
@@ -87,7 +89,7 @@ func (g *Games) updateGamesInformation(ctx context.Context) {
 		}
 	}()
 
-	go g.sendGameUpdate(messages)
+	go g.sendGameUpdate(ctx, messages)
 }
 
 func (g *Games) updateGameList(ctx context.Context) {
@@ -103,43 +105,53 @@ func (g *Games) updateGameList(ctx context.Context) {
 	}()
 }
 
-func (g *Games) sendGameUpdate(messages <-chan *message.Message) {
-	for msg := range messages {
+func (g *Games) sendGameUpdate(ctx context.Context, messages <-chan *message.Message) {
+	gameText := ""
+	t := time.Tick(g.c.BufferEventTime)
+
+	for {
 		if !g.shouldNotify {
-			msg.Ack()
-
 			continue
 		}
 
-		var m pubsub.GameEvent
+		select {
+		case msg := <-messages:
+			var m pubsub.GameEvent
 
-		if err := easyjson.Unmarshal(msg.Payload, &m); err != nil {
-			handlers.SendError(g.q, err)
+			if err := easyjson.Unmarshal(msg.Payload, &m); err != nil {
+				handlers.SendError(g.q, err)
+				msg.Ack()
+
+				continue
+			}
+
+			switch m.LastGameChange {
+			case games.Started.String():
+				gameText += "\n" + g.getStartedGameMessage(m)
+			case games.Finished.String():
+				gameText += "\n" + g.getFinishedGameMessage(m)
+			default:
+				msg.Ack()
+
+				continue
+			}
+
+			gameText = strings.Trim(gameText, "\n")
+
 			msg.Ack()
+		case <-t:
+			if gameText != "" {
+				mb, _ := easyjson.Marshal(pubsub.TextEvent{Text: gameText})
 
-			continue
+				if err := g.q.Publish(pubsub.TextTopic.String(), message.NewMessage(watermill.NewUUID(), mb)); err != nil {
+					handlers.SendError(g.q, err)
+				}
+
+				gameText = ""
+			}
+		case <-ctx.Done():
+			return
 		}
-
-		gameText := ""
-
-		switch m.LastGameChange {
-		case games.Started.String():
-			gameText = g.getStartedGameMessage(m)
-		case games.Finished.String():
-			gameText = g.getFinishedGameMessage(m)
-		default:
-			msg.Ack()
-
-			continue
-		}
-
-		mb, _ := easyjson.Marshal(pubsub.TextEvent{Text: gameText})
-
-		if err := g.q.Publish(pubsub.TextTopic.String(), message.NewMessage(watermill.NewUUID(), mb)); err != nil {
-			handlers.SendError(g.q, err)
-		}
-
-		msg.Ack()
 	}
 }
 
