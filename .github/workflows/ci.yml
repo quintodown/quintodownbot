@@ -4,7 +4,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.24.x]
+        go-version: [1.27.x]
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -37,11 +37,13 @@ jobs:
   golangci:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      GOTOOLCHAIN: go1.27.3
     steps:
       - name: Install Go
         uses: actions/setup-go@v7.0.0
         with:
-          go-version: 1.24.x
+          go-version: 1.27.x
       - uses: actions/checkout@v7
       - name: Generate env file
         run: 'echo "$ENV_FILE" > cmd/env'
@@ -62,4 +64,5 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9.3.0
         with:
-          version: v2.5.0
+          version: v2.15.0
+          install-mode: goinstall
