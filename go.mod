@@ -1,6 +1,6 @@
 module github.com/quintodown/quintodownbot
 
-go 1.24.0
+go 1.27.3
 
 require (
 	github.com/c-sto/encembed v0.0.0-20211021084118-3213e2129290

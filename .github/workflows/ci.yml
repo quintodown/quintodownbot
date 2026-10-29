@@ -4,7 +4,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.24.x]
+        go-version: [1.27.x]
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -41,7 +41,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v7.0.0
         with:
-          go-version: 1.24.x
+          go-version: 1.27.x
       - uses: actions/checkout@v7
       - name: Generate env file
         run: 'echo "$ENV_FILE" > cmd/env'
