@@ -37,6 +37,8 @@ jobs:
   golangci:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      GOTOOLCHAIN: go1.27.3
     steps:
       - name: Install Go
         uses: actions/setup-go@v7.0.0
